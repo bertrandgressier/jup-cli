@@ -1,3 +1,9 @@
+## [2.0.3](https://github.com/bertrandgressier/jup-cli/compare/v2.0.2...v2.0.3) (2026-02-12)
+
+### Bug Fixes
+
+- publish as jup-cli ([78bdcea](https://github.com/bertrandgressier/jup-cli/commit/78bdcea71f06bc7a284549a722b8063687072fa4))
+
 ## [2.0.2](https://github.com/bertrandgressier/jup-cli/compare/v2.0.1...v2.0.2) (2026-02-12)
 
 ### Bug Fixes
