@@ -73,7 +73,7 @@ describe('CLI End-to-End Tests', () => {
 
     it('should update Jupiter API key', () => {
       const newKey = 'new-api-key-67890';
-      const output = runCLI(`config set-jupiter-key --key ${newKey}`);
+      const output = runCLI(`config set-jupiter-key ${newKey}`);
 
       expect(output).toContain('API key configured');
     });
