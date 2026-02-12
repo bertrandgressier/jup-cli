@@ -1,6 +1,6 @@
-# Contributing to Jupiter CLI
+# Contributing to Jup CLI
 
-First off, thank you for considering contributing to Jupiter CLI! It's people like you that make Jupiter CLI such a great tool.
+First off, thank you for considering contributing to Jup CLI! It's people like you that make Jup CLI such a great tool.
 
 ## Code of Conduct
 
@@ -50,8 +50,8 @@ Enhancement suggestions are tracked as GitHub issues. When creating an enhanceme
 
 ```bash
 # Clone your fork
-git clone https://github.com/your-username/jupiter-cli.git
-cd jupiter-cli
+git clone https://github.com/your-username/jup-cli.git
+cd jup-cli
 
 # Install dependencies
 npm install
@@ -201,7 +201,7 @@ We follow [Semantic Versioning](https://semver.org/):
 ## Getting Help
 
 - Check the [README.md](README.md)
-- Look through [existing issues](https://github.com/bertrandgressier/jupiter-cli/issues)
+- Look through [existing issues](https://github.com/bertrandgressier/jup-cli/issues)
 - Join our [Discord community](https://discord.gg/yourserver)
 
 ## Recognition

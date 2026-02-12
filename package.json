@@ -1,5 +1,5 @@
 {
-  "name": "jupiter-cli",
+  "name": "jup-cli",
   "version": "2.0.2",
   "description": "A secure, multi-wallet CLI for trading on Solana via Jupiter DEX aggregator",
   "main": "dist/index.js",
@@ -53,13 +53,13 @@
     "url": "https://github.com/bertrandgressier"
   },
   "license": "MIT",
-  "homepage": "https://github.com/bertrandgressier/jupiter-cli#readme",
+  "homepage": "https://github.com/bertrandgressier/jup-cli#readme",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/bertrandgressier/jupiter-cli.git"
+    "url": "git+https://github.com/bertrandgressier/jup-cli.git"
   },
   "bugs": {
-    "url": "https://github.com/bertrandgressier/jupiter-cli/issues"
+    "url": "https://github.com/bertrandgressier/jup-cli/issues"
   },
   "publishConfig": {
     "access": "public"

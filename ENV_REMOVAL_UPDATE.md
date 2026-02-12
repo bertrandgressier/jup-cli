@@ -22,17 +22,17 @@ Toutes les variables d'environnement ont été supprimées. La configuration est
 
 ### Configuration via YAML
 
-Toute la configuration est dans `~/.solana/jupiter-cli/config.yaml` :
+Toute la configuration est dans `~/.solana/jup-cli/config.yaml` :
 
 ```yaml
 paths:
-  data: ~/.solana/jupiter-cli/data
-  logs: ~/.solana/jupiter-cli/logs
-  cache: ~/.solana/jupiter-cli/cache
+  data: ~/.solana/jup-cli/data
+  logs: ~/.solana/jup-cli/logs
+  cache: ~/.solana/jup-cli/cache
 
 database:
   provider: sqlite
-  url: file:~/.solana/jupiter-cli/data/jupiter.db
+  url: file:~/.solana/jup-cli/data/jupiter.db
 
 jupiter:
   baseUrl: https://api.jup.ag

@@ -38,7 +38,7 @@ describe('Configuration and Data Directory', () => {
     it('should return correct paths', () => {
       expect(pathManager.getConfigPath()).toBe(path.join(testDataDir, 'config.yaml'));
       expect(pathManager.getDatabasePath()).toBe(path.join(testDataDir, 'data', 'jupiter.db'));
-      expect(pathManager.getLogPath()).toBe(path.join(testDataDir, 'logs', 'jupiter-cli.log'));
+      expect(pathManager.getLogPath()).toBe(path.join(testDataDir, 'logs', 'jup-cli.log'));
     });
 
     it('should detect uninitialized state', () => {

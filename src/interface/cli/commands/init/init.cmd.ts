@@ -8,7 +8,7 @@ import { SessionService } from '../../../../core/session/session.service';
 
 export function createInitCommand(getDataDir: () => string | undefined): Command {
   const command = new Command('init')
-    .description('Initialize Jupiter CLI with master password')
+    .description('Initialize Jup CLI with master password')
     .option('-f, --force', 'Force reinitialization if already exists')
     .option('-p, --password <password>', 'Master password (non-interactive mode)')
     .option('--jupiter-key <key>', 'Jupiter API key (optional)')
@@ -17,13 +17,13 @@ export function createInitCommand(getDataDir: () => string | undefined): Command
       const pathManager = new PathManager(dataDir);
 
       if (pathManager.isInitialized() && !options.force) {
-        console.log(chalk.yellow(`\n⚠️  Jupiter CLI is already initialized at:`));
+        console.log(chalk.yellow(`\n⚠️  Jup CLI is already initialized at:`));
         console.log(chalk.dim(`   ${pathManager.getDataDir()}`));
         console.log(chalk.dim('\n   Use --force to reinitialize or delete the directory.'));
         return;
       }
 
-      console.log(chalk.bold('\n🔧 Jupiter CLI Initialization\n'));
+      console.log(chalk.bold('\n🔧 Jup CLI Initialization\n'));
 
       if (dataDir) {
         console.log(chalk.dim(`Data directory: ${pathManager.getDataDir()}\n`));
@@ -90,7 +90,7 @@ export function createInitCommand(getDataDir: () => string | undefined): Command
           return;
         }
 
-        console.log('\n⏳ Initializing Jupiter CLI...\n');
+        console.log('\n⏳ Initializing Jup CLI...\n');
 
         const projectConfig = new ProjectConfigurationService(dataDir);
         const prisma = projectConfig.createPrismaClient();

@@ -26,7 +26,7 @@ export function createWalletCommands(
     const pathManager = new PathManager(dataDir);
 
     if (!pathManager.isInitialized()) {
-      console.error(chalk.red('\n❌ Jupiter CLI is not initialized.\n'));
+      console.error(chalk.red('\n❌ Jup CLI is not initialized.\n'));
       console.log(chalk.dim('Please run: jupiter init\n'));
       process.exit(1);
     }

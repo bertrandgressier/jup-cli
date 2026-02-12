@@ -12,7 +12,7 @@ export class PathManager {
 
   private getDefaultDataDir(): string {
     const home = os.homedir();
-    return path.join(home, '.solana', 'jupiter-cli');
+    return path.join(home, '.solana', 'jup-cli');
   }
 
   getDataDir(): string {
@@ -36,7 +36,7 @@ export class PathManager {
   }
 
   getLogPath(): string {
-    return path.join(this.getLogsDir(), 'jupiter-cli.log');
+    return path.join(this.getLogsDir(), 'jup-cli.log');
   }
 
   getCacheDir(): string {

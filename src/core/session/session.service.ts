@@ -164,7 +164,7 @@ export class SessionService {
   }
 
   private getMachineKey(): Buffer {
-    const machineId = `${os.hostname()}:${os.userInfo().username}:jupiter-cli`;
+    const machineId = `${os.hostname()}:${os.userInfo().username}:jup-cli`;
     return Buffer.from(machineId.padEnd(32, 'x')).slice(0, 32);
   }
 

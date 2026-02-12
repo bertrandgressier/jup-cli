@@ -1,4 +1,4 @@
-# Architecture Jupiter CLI
+# Architecture Jup CLI
 
 ## Vue d'ensemble
 
@@ -82,7 +82,7 @@ Cette CLI Jupiter suit les principes de la **Clean Architecture** avec une sépa
 ## Structure du Projet
 
 ```
-jupiter-cli/
+jup-cli/
 ├── src/
 │   ├── core/                           # Couche transverse
 │   │   ├── config/
@@ -129,7 +129,7 @@ jupiter-cli/
 │   │   │   └── prisma-wallet.repository.ts
 │   │   ├── jupiter-api/
 │   │   │   ├── ultra/ultra-api.service.ts
-│   │   │   └── shared/jupiter-client.ts
+│   │   │   └── shared/jup-client.ts
 │   │   └── solana/
 │   │       ├── connection.service.ts
 │   │       └── solana-rpc.service.ts

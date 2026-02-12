@@ -1,4 +1,4 @@
-# Development Guidelines - Jupiter CLI
+# Development Guidelines - Jup CLI
 
 ## Build, Lint & Test Commands
 

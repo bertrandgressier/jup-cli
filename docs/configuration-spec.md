@@ -2,13 +2,13 @@
 
 ## Vue d'ensemble
 
-Cette spécification définit le système de gestion de la configuration et des chemins de données pour Jupiter CLI, permettant une flexibilité maximale pour les différents environnements (développement, test, production).
+Cette spécification définit le système de gestion de la configuration et des chemins de données pour Jup CLI, permettant une flexibilité maximale pour les différents environnements (développement, test, production).
 
 ## Objectifs
 
 1. **Configuration centralisée** via fichier YAML
 2. **Chemins de données configurables** (base SQLite, logs, etc.)
-3. **Répertoire par défaut** : `~/.solana/jupiter-cli/`
+3. **Répertoire par défaut** : `~/.solana/jup-cli/`
 4. **Override via ligne de commande** pour les tests et déploiements
 5. **Isolation des environnements** (dev, test, prod)
 
@@ -17,13 +17,13 @@ Cette spécification définit le système de gestion de la configuration et des 
 ### Répertoire par défaut
 
 ```
-~/.solana/jupiter-cli/
+~/.solana/jup-cli/
 ├── config.yaml          # Configuration principale
 ├── data/
 │   ├── jupiter.db       # Base de données SQLite
 │   └── jupiter.db-journal
 ├── logs/
-│   └── jupiter-cli.log  # Fichiers de log
+│   └── jup-cli.log  # Fichiers de log
 └── cache/
     └── price-cache.json # Cache des prix
 ```
@@ -31,13 +31,13 @@ Cette spécification définit le système de gestion de la configuration et des 
 ### Fichier config.yaml
 
 ```yaml
-# ~/.solana/jupiter-cli/config.yaml
+# ~/.solana/jup-cli/config.yaml
 
 # === Chemins de données ===
 paths:
-  data: ~/.solana/jupiter-cli/data
-  logs: ~/.solana/jupiter-cli/logs
-  cache: ~/.solana/jupiter-cli/cache
+  data: ~/.solana/jup-cli/data
+  logs: ~/.solana/jup-cli/logs
+  cache: ~/.solana/jup-cli/cache
 
 # === Base de données ===
 database:
@@ -81,7 +81,7 @@ security:
 Toutes les commandes acceptent l'option `--data-dir` pour spécifier un répertoire alternatif :
 
 ```bash
-# Utilisation par défaut (~/.solana/jupiter-cli/)
+# Utilisation par défaut (~/.solana/jup-cli/)
 jupiter init
 
 # Utilisation d'un répertoire personnalisé
@@ -120,7 +120,7 @@ export class ConfigurationService {
 
   private getDefaultDataDir(): string {
     const home = process.env.HOME || process.env.USERPROFILE;
-    return path.join(home!, '.solana', 'jupiter-cli');
+    return path.join(home!, '.solana', 'jup-cli');
   }
 
   private loadConfiguration(): Configuration {
@@ -169,7 +169,7 @@ export class PathManager {
   }
 
   getLogPath(): string {
-    return path.join(this.dataDir, 'logs', 'jupiter-cli.log');
+    return path.join(this.dataDir, 'logs', 'jup-cli.log');
   }
 
   getCachePath(): string {
@@ -304,12 +304,12 @@ jupiter --data-dir ./test-data pnl show ...
 1. **Tests isolés** : Chaque test peut avoir son propre répertoire de données
 2. **Multi-environnement** : Dev, staging, prod avec des configs différentes
 3. **Portabilité** : Déplacer toute la configuration en copiant un dossier
-4. **Backup facile** : Sauvegarder `~/.solana/jupiter-cli/` entièrement
+4. **Backup facile** : Sauvegarder `~/.solana/jup-cli/` entièrement
 5. **CI/CD friendly** : Spécifier des chemins temporaires pour les tests
 
 ## Sécurité
 
-- Les permissions du répertoire `~/.solana/jupiter-cli/` doivent être `700` (rwx------)
+- Les permissions du répertoire `~/.solana/jup-cli/` doivent être `700` (rwx------)
 - Le fichier `config.yaml` ne doit jamais contenir de clés privées
 - Les clés chiffrées restent dans la base SQLite
 - Logs sans données sensibles (pas de clés, pas de passwords)

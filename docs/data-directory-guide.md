@@ -2,9 +2,9 @@
 
 ## Vue d'ensemble
 
-Jupiter CLI supporte maintenant une gestion flexible des données via :
+Jup CLI supporte maintenant une gestion flexible des données via :
 
-- **Répertoire par défaut** : `~/.solana/jupiter-cli/`
+- **Répertoire par défaut** : `~/.solana/jup-cli/`
 - **Configuration YAML** : `config.yaml`
 - **Override ligne de commande** : `--data-dir`
 - **Variables d'environnement** : `JUPITER_DATA_DIR`
@@ -12,12 +12,12 @@ Jupiter CLI supporte maintenant une gestion flexible des données via :
 ## Structure du Répertoire de Données
 
 ```
-~/.solana/jupiter-cli/           # ou votre répertoire personnalisé
+~/.solana/jup-cli/           # ou votre répertoire personnalisé
 ├── config.yaml                  # Configuration principale
 ├── data/
 │   └── jupiter.db              # Base de données SQLite
 ├── logs/
-│   └── jupiter-cli.log         # Fichiers de log
+│   └── jup-cli.log         # Fichiers de log
 └── cache/
     └── price-cache.json        # Cache des prix (futur)
 ```
@@ -27,7 +27,7 @@ Jupiter CLI supporte maintenant une gestion flexible des données via :
 ### 1. Initialisation Standard
 
 ```bash
-# Utilise le répertoire par défaut ~/.solana/jupiter-cli/
+# Utilise le répertoire par défaut ~/.solana/jup-cli/
 jupiter init
 ```
 
@@ -54,13 +54,13 @@ Le fichier `config.yaml` est généré automatiquement lors de l'initialisation 
 
 ```yaml
 paths:
-  data: ~/.solana/jupiter-cli/data
-  logs: ~/.solana/jupiter-cli/logs
-  cache: ~/.solana/jupiter-cli/cache
+  data: ~/.solana/jup-cli/data
+  logs: ~/.solana/jup-cli/logs
+  cache: ~/.solana/jup-cli/cache
 
 database:
   provider: sqlite
-  url: file:~/.solana/jupiter-cli/data/jupiter.db
+  url: file:~/.solana/jup-cli/data/jupiter.db
 
 jupiter:
   baseUrl: https://api.jup.ag
@@ -90,7 +90,7 @@ security:
 
 ```bash
 # Éditer le fichier config.yaml
-nano ~/.solana/jupiter-cli/config.yaml
+nano ~/.solana/jup-cli/config.yaml
 
 # Ou utiliser une variable d'environnement temporairement
 JUPITER_LOG_LEVEL=debug jupiter wallet list
@@ -204,13 +204,13 @@ rm -rf $TEST_DIR
 
 ```bash
 # Production
-jupiter --data-dir ~/.solana/jupiter-cli-prod init
+jupiter --data-dir ~/.solana/jup-cli-prod init
 
 # Staging
-jupiter --data-dir ~/.solana/jupiter-cli-staging init
+jupiter --data-dir ~/.solana/jup-cli-staging init
 
 # Development
-jupiter --data-dir ~/.solana/jupiter-cli-dev init
+jupiter --data-dir ~/.solana/jup-cli-dev init
 ```
 
 ### 4. Backup et Restauration
@@ -218,20 +218,20 @@ jupiter --data-dir ~/.solana/jupiter-cli-dev init
 ```bash
 # Backup
 BACKUP_DIR="jupiter-backup-$(date +%Y%m%d)"
-cp -r ~/.solana/jupiter-cli ./$BACKUP_DIR
+cp -r ~/.solana/jup-cli ./$BACKUP_DIR
 tar -czf $BACKUP_DIR.tar.gz $BACKUP_DIR
 rm -rf $BACKUP_DIR
 
 # Restauration
 tar -xzf jupiter-backup-20240209.tar.gz
-cp -r jupiter-backup-20240209 ~/.solana/jupiter-cli
+cp -r jupiter-backup-20240209 ~/.solana/jup-cli
 ```
 
 ### 5. Partage de Configuration
 
 ```bash
 # Copier la configuration vers une nouvelle machine
-scp -r ~/.solana/jupiter-cli user@new-machine:~/.solana/
+scp -r ~/.solana/jup-cli user@new-machine:~/.solana/
 
 # Sur la nouvelle machine
 jupiter wallet list  # Devrait fonctionner immédiatement
@@ -246,21 +246,21 @@ jupiter wallet list  # Devrait fonctionner immédiatement
 ls -la ~/.solana/
 
 # Corriger si nécessaire
-chmod 700 ~/.solana/jupiter-cli
+chmod 700 ~/.solana/jup-cli
 ```
 
 ### Problème : Base de données verrouillée
 
 ```bash
 # Si la DB est verrouillée (après un crash)
-rm ~/.solana/jupiter-cli/data/jupiter.db-journal
+rm ~/.solana/jup-cli/data/jupiter.db-journal
 ```
 
 ### Problème : Configuration corrompue
 
 ```bash
 # Supprimer et réinitialiser
-rm -rf ~/.solana/jupiter-cli
+rm -rf ~/.solana/jup-cli
 jupiter init
 ```
 
@@ -291,7 +291,7 @@ jupiter init
 4. **Sauvegarder régulièrement**
    ```bash
    # Cron job pour backup quotidien
-   0 2 * * * tar -czf ~/backups/jupiter-$(date +\%Y\%m\%d).tar.gz ~/.solana/jupiter-cli
+   0 2 * * * tar -czf ~/backups/jupiter-$(date +\%Y\%m\%d).tar.gz ~/.solana/jup-cli
    ```
 
 ## Migration depuis l'Ancien Système
@@ -306,7 +306,7 @@ cp -r data data-backup
 jupiter init
 
 # 3. Copier l'ancienne base de données
-cp data-backup/jupiter.db ~/.solana/jupiter-cli/data/
+cp data-backup/jupiter.db ~/.solana/jup-cli/data/
 
 # 4. Vérifier que tout fonctionne
 jupiter wallet list
@@ -317,7 +317,7 @@ jupiter wallet list
 ### Utiliser dans vos scripts
 
 ```typescript
-import { ConfigurationService, PathManager } from 'jupiter-cli/src/core/config';
+import { ConfigurationService, PathManager } from 'jup-cli/src/core/config';
 
 // Créer une configuration personnalisée
 const dataDir = './my-test-data';
@@ -336,4 +336,4 @@ const prisma = new PrismaClient({
 
 ---
 
-**Note** : Le répertoire par défaut `~/.solana/jupiter-cli/` est créé avec des permissions restrictives (700) pour protéger vos données sensibles.
+**Note** : Le répertoire par défaut `~/.solana/jup-cli/` est créé avec des permissions restrictives (700) pour protéger vos données sensibles.

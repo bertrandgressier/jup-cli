@@ -1,4 +1,4 @@
-# Jupiter CLI
+# Jup CLI
 
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.3-blue.svg)](https://www.typescriptlang.org/)
 [![Node.js](https://img.shields.io/badge/Node.js-18%2B-green.svg)](https://nodejs.org/)
@@ -24,8 +24,8 @@
 
 ```bash
 # Clone the repository
-git clone https://github.com/bertrandgressier/jupiter-cli.git
-cd jupiter-cli
+git clone https://github.com/bertrandgressier/jup-cli.git
+cd jup-cli
 
 # Install dependencies
 npm install
@@ -80,7 +80,7 @@ jupiter trade swap USDC SOL 0.1 --wallet <wallet-id> --yes
 
 ### Session-Based Architecture
 
-Jupiter CLI uses a unique **session-based security model** that allows agents to operate autonomously while protecting sensitive operations.
+Jup CLI uses a unique **session-based security model** that allows agents to operate autonomously while protecting sensitive operations.
 
 ```
 ┌─────────────────────────────────────────────────────────────────┐
@@ -88,7 +88,7 @@ Jupiter CLI uses a unique **session-based security model** that allows agents to
 ├─────────────────────────────────────────────────────────────────┤
 │  $ jupiter init --password <pwd>                                │
 │      → Creates database                                          │
-│      → Generates SESSION_KEY stored in ~/.solana/jupiter-cli/   │
+│      → Generates SESSION_KEY stored in ~/.solana/jup-cli/   │
 │                                                                  │
 │  $ jupiter wallet import --name "Main" --private-key <key>      │
 │      → Wallet encrypted with session key                         │
@@ -120,7 +120,7 @@ jupiter [options] <command>
 
 Options:
   -V, --version          Show version number
-  -d, --data-dir <path>  Custom data directory (default: ~/.solana/jupiter-cli/)
+  -d, --data-dir <path>  Custom data directory (default: ~/.solana/jup-cli/)
   -v, --verbose          Enable verbose console logging
   -h, --help             Display help
 ```
@@ -232,12 +232,12 @@ jupiter trade swap USDC SOL 0.1 --wallet <id> --slippage 50 --yes
 
 ### Session Characteristics
 
-| Property   | Value                                                 |
-| ---------- | ----------------------------------------------------- |
-| Scope      | Global (one session for all wallets)                  |
-| Storage    | `~/.solana/jupiter-cli/session/key` (permissions 600) |
-| Expiration | Never (until manual regeneration)                     |
-| Encryption | AES-256-GCM with master password                      |
+| Property   | Value                                             |
+| ---------- | ------------------------------------------------- |
+| Scope      | Global (one session for all wallets)              |
+| Storage    | `~/.solana/jup-cli/session/key` (permissions 600) |
+| Expiration | Never (until manual regeneration)                 |
+| Encryption | AES-256-GCM with master password                  |
 
 ### Security Levels
 
@@ -264,17 +264,17 @@ jupiter trade swap USDC SOL 0.1 --wallet <id> --slippage 50 --yes
 
 ### Configuration File
 
-Location: `~/.solana/jupiter-cli/config.yaml`
+Location: `~/.solana/jup-cli/config.yaml`
 
 ```yaml
 paths:
-  data: ~/.solana/jupiter-cli/data
-  logs: ~/.solana/jupiter-cli/logs
-  cache: ~/.solana/jupiter-cli/cache
+  data: ~/.solana/jup-cli/data
+  logs: ~/.solana/jup-cli/logs
+  cache: ~/.solana/jup-cli/cache
 
 database:
   provider: sqlite
-  url: file:~/.solana/jupiter-cli/data/jupiter.db
+  url: file:~/.solana/jup-cli/data/jupiter.db
 
 jupiter:
   baseUrl: https://api.jup.ag
@@ -309,7 +309,7 @@ export DATABASE_URL=file:/custom/path/jupiter.db
 
 ### Logging
 
-By default, logs are written to files only (`~/.solana/jupiter-cli/logs/jupiter.1.log`) with daily rotation (30 days retention).
+By default, logs are written to files only (`~/.solana/jup-cli/logs/jupiter.1.log`) with daily rotation (30 days retention).
 
 To enable console logging for debugging:
 
@@ -426,8 +426,8 @@ jupiter config set-jupiter-key your-new-api-key
 Ensure the data directory has correct permissions:
 
 ```bash
-chmod 700 ~/.solana/jupiter-cli
-chmod 600 ~/.solana/jupiter-cli/session/key
+chmod 700 ~/.solana/jup-cli
+chmod 600 ~/.solana/jup-cli/session/key
 ```
 
 ## 📝 License
@@ -443,7 +443,7 @@ Contributions are welcome! Please read our [Contributing Guide](CONTRIBUTING.md)
 - [Jupiter DEX](https://jup.ag/)
 - [Jupiter API Documentation](https://station.jup.ag/docs/apis/)
 - [Solana Documentation](https://docs.solana.com/)
-- [Report Issues](https://github.com/bertrandgressier/jupiter-cli/issues)
+- [Report Issues](https://github.com/bertrandgressier/jup-cli/issues)
 
 ## 🙏 Acknowledgments
 

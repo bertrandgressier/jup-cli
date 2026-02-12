@@ -1,8 +1,8 @@
-# Projet Jupiter CLI - Résumé d'Implémentation
+# Projet Jup CLI - Résumé d'Implémentation
 
 ## ✅ Statut: COMPLET
 
-Le projet Jupiter CLI a été entièrement implémenté selon l'architecture définie dans ARCHITECTURE.md.
+Le projet Jup CLI a été entièrement implémenté selon l'architecture définie dans ARCHITECTURE.md.
 
 ## 📊 Statistiques
 

@@ -1,28 +1,28 @@
-## [2.0.2](https://github.com/bertrandgressier/jupiter-cli/compare/v2.0.1...v2.0.2) (2026-02-12)
+## [2.0.2](https://github.com/bertrandgressier/jup-cli/compare/v2.0.1...v2.0.2) (2026-02-12)
 
 ### Bug Fixes
 
-- republish to npm ([1733ca1](https://github.com/bertrandgressier/jupiter-cli/commit/1733ca183e552ce7fe6a3b4aabbffb663f6cf97c))
+- republish to npm ([1733ca1](https://github.com/bertrandgressier/jup-cli/commit/1733ca183e552ce7fe6a3b4aabbffb663f6cf97c))
 
-## [2.0.1](https://github.com/bertrandgressier/jupiter-cli/compare/v2.0.0...v2.0.1) (2026-02-12)
-
-### Bug Fixes
-
-- trigger npm publish ([416df26](https://github.com/bertrandgressier/jupiter-cli/commit/416df26dba87bacc8625b8b78fd4055cce8564b5))
-
-# [2.0.0](https://github.com/bertrandgressier/jupiter-cli/compare/v1.0.0...v2.0.0) (2026-02-12)
+## [2.0.1](https://github.com/bertrandgressier/jup-cli/compare/v2.0.0...v2.0.1) (2026-02-12)
 
 ### Bug Fixes
 
-- **ci:** add @eslint/js and fix eslint config for ESLint 9.x ([f16cf0a](https://github.com/bertrandgressier/jupiter-cli/commit/f16cf0ac3569094cf2bfdbd4a0d098f6e1d5e77b))
-- **ci:** add build step before tests and lower coverage thresholds ([de5d4d0](https://github.com/bertrandgressier/jupiter-cli/commit/de5d4d0e435c8cd9818b3607487f3a490c802928))
-- **ci:** correct test command syntax for pnpm ([b005a3a](https://github.com/bertrandgressier/jupiter-cli/commit/b005a3afff000f16f815e624e5e209416667c431))
-- migrate to ESLint 9.x flat config format ([a0993a8](https://github.com/bertrandgressier/jupiter-cli/commit/a0993a8567b36ad220ffe09594ce77e5d6c93711))
-- **tests:** skip flaky tests and fix e2e command option ([393bc0d](https://github.com/bertrandgressier/jupiter-cli/commit/393bc0d6959eb5adc16e9b7411c392a8e6191dcc))
+- trigger npm publish ([416df26](https://github.com/bertrandgressier/jup-cli/commit/416df26dba87bacc8625b8b78fd4055cce8564b5))
+
+# [2.0.0](https://github.com/bertrandgressier/jup-cli/compare/v1.0.0...v2.0.0) (2026-02-12)
+
+### Bug Fixes
+
+- **ci:** add @eslint/js and fix eslint config for ESLint 9.x ([f16cf0a](https://github.com/bertrandgressier/jup-cli/commit/f16cf0ac3569094cf2bfdbd4a0d098f6e1d5e77b))
+- **ci:** add build step before tests and lower coverage thresholds ([de5d4d0](https://github.com/bertrandgressier/jup-cli/commit/de5d4d0e435c8cd9818b3607487f3a490c802928))
+- **ci:** correct test command syntax for pnpm ([b005a3a](https://github.com/bertrandgressier/jup-cli/commit/b005a3afff000f16f815e624e5e209416667c431))
+- migrate to ESLint 9.x flat config format ([a0993a8](https://github.com/bertrandgressier/jup-cli/commit/a0993a8567b36ad220ffe09594ce77e5d6c93711))
+- **tests:** skip flaky tests and fix e2e command option ([393bc0d](https://github.com/bertrandgressier/jup-cli/commit/393bc0d6959eb5adc16e9b7411c392a8e6191dcc))
 
 ### chore
 
-- migrate to pnpm and update dependencies to latest versions ([ad32518](https://github.com/bertrandgressier/jupiter-cli/commit/ad32518dcf4c456a422d1976e2b8b483e8c5b5a5))
+- migrate to pnpm and update dependencies to latest versions ([ad32518](https://github.com/bertrandgressier/jup-cli/commit/ad32518dcf4c456a422d1976e2b8b483e8c5b5a5))
 
 ### BREAKING CHANGES
 
@@ -39,7 +39,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- Initial release of Jupiter CLI
+- Initial release of Jup CLI
 - Session-based security model for agent-autonomous operations
 - Multi-wallet management with AES-256-GCM encryption
 - Jupiter Ultra API integration for optimal swap execution
@@ -72,5 +72,5 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Session-based authentication system
 - Enterprise-grade security
 
-[Unreleased]: https://github.com/bertrandgressier/jupiter-cli/compare/v1.0.0...HEAD
-[1.0.0]: https://github.com/bertrandgressier/jupiter-cli/releases/tag/v1.0.0
+[Unreleased]: https://github.com/bertrandgressier/jup-cli/compare/v1.0.0...HEAD
+[1.0.0]: https://github.com/bertrandgressier/jup-cli/releases/tag/v1.0.0

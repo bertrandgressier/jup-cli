@@ -8,7 +8,7 @@ La spécification pour la gestion de la base de données et du fichier de config
 
 ### 1. **Répertoire de Données Configurable**
 
-- **Par défaut** : `~/.solana/jupiter-cli/`
+- **Par défaut** : `~/.solana/jup-cli/`
 - **Option CLI** : `--data-dir <path>`
 - **Variable d'environnement** : `JUPITER_DATA_DIR`
 
@@ -20,7 +20,7 @@ La spécification pour la gestion de la base de données et du fichier de config
 ├── data/
 │   └── jupiter.db      # Base SQLite
 ├── logs/
-│   └── jupiter-cli.log # Logs
+│   └── jup-cli.log # Logs
 └── cache/              # Cache
 ```
 
@@ -93,7 +93,7 @@ Fichier `config.yaml` généré automatiquement avec toutes les options :
 - `src/core/config/env.schema.ts` - Support variables d'env
 - `src/core/config/config.service.ts` - Rétrocompatibilité
 - `src/core/logger/logger.service.ts` - Utilise ConfigurationService
-- `src/infrastructure/jupiter-api/shared/jupiter-client.ts` - Utilise ConfigurationService
+- `src/infrastructure/jupiter-api/shared/jup-client.ts` - Utilise ConfigurationService
 - `src/infrastructure/solana/connection.service.ts` - Utilise ConfigurationService
 - `src/interface/cli/commands/init/init.cmd.ts` - Utilise nouveaux services
 - `src/interface/cli/commands/wallet/wallet.cmd.ts` - Accepte factory function
@@ -176,13 +176,13 @@ rm -rf $TEST_DIR
 
 ```bash
 # Production
-jupiter --data-dir ~/.solana/jupiter-cli-prod init
+jupiter --data-dir ~/.solana/jup-cli-prod init
 
 # Staging
-jupiter --data-dir ~/.solana/jupiter-cli-staging init
+jupiter --data-dir ~/.solana/jup-cli-staging init
 
 # Development
-jupiter --data-dir ~/.solana/jupiter-cli-dev init
+jupiter --data-dir ~/.solana/jup-cli-dev init
 ```
 
 ### 3. CI/CD Pipeline

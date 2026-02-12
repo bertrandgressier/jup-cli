@@ -80,9 +80,9 @@ const program = new Command();
 
 program
   .name('jupiter')
-  .description('Jupiter CLI - Trade on Solana with multi-wallet support and PnL tracking')
+  .description('Jup CLI - Trade on Solana with multi-wallet support and PnL tracking')
   .version(VERSION)
-  .option('-d, --data-dir <path>', 'Data directory path (default: ~/.solana/jupiter-cli/)')
+  .option('-d, --data-dir <path>', 'Data directory path (default: ~/.solana/jup-cli/)')
   .option('-v, --verbose', 'Enable verbose logging to console')
   .hook('preAction', (thisCommand) => {
     // Get options before any command runs
@@ -120,7 +120,7 @@ program.on('--help', () => {
   console.log('  $ jupiter pnl show --wallet <id>            # Show PnL');
   console.log('');
   console.log(chalk.dim('Configuration:'));
-  console.log(chalk.dim('  All settings are stored in: ~/.solana/jupiter-cli/config.yaml'));
+  console.log(chalk.dim('  All settings are stored in: ~/.solana/jup-cli/config.yaml'));
   console.log(chalk.dim('  Use "jupiter config" commands to manage settings'));
   console.log('');
 });
