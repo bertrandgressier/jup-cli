@@ -137,7 +137,7 @@ describe('CLI End-to-End Tests', () => {
     it('should show version', () => {
       const output = runCLI('--version');
 
-      expect(output).toContain('1.0.0');
+      expect(output).toContain('2.0.5');
     });
 
     it('should show help', () => {

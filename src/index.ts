@@ -75,11 +75,11 @@ function getPrismaClient(): PrismaClient {
   return PrismaClientFactory.getInstance();
 }
 
-const VERSION = '1.0.0';
+const VERSION = '2.0.5';
 const program = new Command();
 
 program
-  .name('jupiter')
+  .name('jup-cli')
   .description('Jup CLI - Trade on Solana with multi-wallet support and PnL tracking')
   .version(VERSION)
   .option('-d, --data-dir <path>', 'Data directory path (default: ~/.solana/jup-cli/)')
