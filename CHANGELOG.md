@@ -1,3 +1,9 @@
+## [2.0.4](https://github.com/bertrandgressier/jup-cli/compare/v2.0.3...v2.0.4) (2026-02-12)
+
+### Bug Fixes
+
+- update bin name to jup-cli and update README ([fb73172](https://github.com/bertrandgressier/jup-cli/commit/fb73172f712f1b26b9cb4504fb6dc7b851442aad))
+
 ## [2.0.3](https://github.com/bertrandgressier/jup-cli/compare/v2.0.2...v2.0.3) (2026-02-12)
 
 ### Bug Fixes
