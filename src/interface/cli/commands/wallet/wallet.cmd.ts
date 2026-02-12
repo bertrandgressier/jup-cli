@@ -12,7 +12,7 @@ import { MasterPasswordService } from '../../../../application/services/security
 import { PrismaWalletRepository } from '../../../../infrastructure/repositories/prisma-wallet.repository';
 import { solanaRpcService } from '../../../../infrastructure/solana/solana-rpc.service';
 import { ultraApiService } from '../../../../infrastructure/jupiter-api/ultra/ultra-api.service';
-import { PathManager } from '../../../../core/config/path.manager';
+import { PathManager } from '../../../../core/config/path-manager';
 import { SessionService } from '../../../../core/session/session.service';
 
 export function createWalletCommands(

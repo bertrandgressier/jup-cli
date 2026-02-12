@@ -1,7 +1,6 @@
 import { ConfigurationService } from '../../../src/core/config/configuration.service';
-import { PathManager } from '../../../src/core/config/path.manager';
+import { PathManager } from '../../../src/core/config/path-manager';
 import { ProjectConfigurationService } from '../../../src/core/config/project-config.service';
-import { PrismaClient } from '@prisma/client';
 import * as fs from 'fs';
 import * as path from 'path';
 
@@ -89,11 +88,17 @@ describe('Configuration and Data Directory', () => {
       expect(projectConfig.getPathManager().getDataDir()).toBe(testDataDir);
     });
 
-    it.skip('should create Prisma client with correct URL', () => {
+    it('should create Prisma client with correct URL', async () => {
       const projectConfig = new ProjectConfigurationService(testDataDir);
       const prisma = projectConfig.createPrismaClient();
 
-      expect(prisma).toBeInstanceOf(PrismaClient);
+      try {
+        expect(prisma).toBeDefined();
+        expect(typeof prisma.$connect).toBe('function');
+        expect(typeof prisma.$disconnect).toBe('function');
+      } finally {
+        await prisma.$disconnect();
+      }
     });
   });
 });

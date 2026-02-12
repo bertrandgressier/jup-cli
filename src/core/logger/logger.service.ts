@@ -21,10 +21,6 @@ export class LoggerService {
     return LoggerService.instance;
   }
 
-  static resetInstance(): void {
-    LoggerService.instance = null as unknown as LoggerService;
-  }
-
   setVerbose(verbose: boolean): void {
     if (this.isVerbose !== verbose) {
       this.isVerbose = verbose;
@@ -89,8 +85,8 @@ export class LoggerService {
     }
 
     // Single stream
-    if (streams.length === 1) {
-      return pino({ level: logLevel, base: undefined }, streams[0]!.stream);
+    if (streams.length === 1 && streams[0]) {
+      return pino({ level: logLevel, base: undefined }, streams[0].stream);
     }
 
     // Multiple streams (file + console)

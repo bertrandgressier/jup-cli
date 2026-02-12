@@ -11,43 +11,43 @@ datasource db {
 
 model MasterPassword {
   id                    Int      @id @default(1)
-  hash                  String   // Hash Argon2id du mot de passe maître
-  salt                  String   // Salt utilisé pour le hash
+  hash                  String   // Argon2id hash of the master password
+  salt                  String   // Salt used for hashing
 
-  // Session Key Persistante (permet l'autonomie de l'agent)
-  encryptedSessionKey   String   // Session key chiffrée (AES-256-GCM)
-  sessionNonce          String   // Nonce pour déchiffrement session key
-  sessionSalt           String   // Salt pour dérivation session key
+  // Persistent Session Key (enables agent autonomy)
+  encryptedSessionKey   String   // Session key encrypted with AES-256-GCM
+  sessionNonce          String   // Nonce for session key decryption
+  sessionSalt           String   // Salt for key derivation
 
   createdAt             DateTime @default(now())
   updatedAt             DateTime @updatedAt
 }
 
 // === Wallets ===
-// Stockage minimal: uniquement les données de sécurité
+// Minimal storage: only security-related data
 
 model Wallet {
-  id          String   @id @default(uuid()) // UUID opaque
-  name        String                           // Nom donné par l'utilisateur
-  address     String   @unique                 // Adresse publique Solana
-  encryptedKey String                          // Clé privée chiffrée (AES-256-GCM)
-  keyNonce    String                           // Nonce pour le déchiffrement
-  keySalt     String                           // Salt pour la dérivation de clé
-  keyAuthTag  String                           // Auth tag pour AES-256-GCM
+  id          String   @id @default(uuid()) // Opaque UUID
+  name        String                           // User-defined name
+  address     String   @unique                 // Solana public address
+  encryptedKey String                          // Private key encrypted with AES-256-GCM
+  keyNonce    String                           // Nonce for decryption
+  keySalt     String                           // Salt for key derivation
+  keyAuthTag  String                           // AES-256-GCM auth tag
   isActive    Boolean  @default(true)
   createdAt   DateTime @default(now())
   lastUsed    DateTime?
 
   // Relations
-  costBasis   CostBasis[] // Coût moyen par token (pour PnL)
+  costBasis   CostBasis[] // Average cost per token (for PnL)
 
   @@index([address])
   @@index([isActive])
 }
 
 // === Cost Basis ===
-// UNIQUEMENT pour PnL: stocke le prix d'achat moyen par token
-// Tout le reste (solde, prix actuel) est récupéré via API Jupiter
+// Used exclusively for PnL: stores the average purchase price per token
+// Everything else (balance, current price) is fetched via Jupiter API
 
 model CostBasis {
   id              String   @id @default(uuid())
@@ -55,16 +55,16 @@ model CostBasis {
   wallet          Wallet   @relation(fields: [walletId], references: [id])
 
   mint            String   // Token address
-  symbol          String?  // Symbole (SOL, USDC, etc.)
+  symbol          String?  // Symbol (SOL, USDC, etc.)
   
-  // Coût moyen d'acquisition (CRITIQUE pour PnL)
-  avgPriceUsd     String   // Prix moyen d'achat (stored as string for precision)
-  totalAcquired   String   // Quantité totale achetée (stored as string for precision)
-  totalCostUsd    String   // Coût total en USD (stored as string for precision)
+  // Average acquisition cost (critical for PnL)
+  avgPriceUsd     String   // Average purchase price (stored as string for precision)
+  totalAcquired   String   // Total quantity acquired (stored as string for precision)
+  totalCostUsd    String   // Total cost in USD (stored as string for precision)
 
   updatedAt       DateTime @updatedAt
 
-  @@unique([walletId, mint]) // Une entrée par token par wallet
+  @@unique([walletId, mint]) // One entry per token per wallet
   @@index([walletId])
   @@index([mint])
 }

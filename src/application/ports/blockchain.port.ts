@@ -1,8 +1,3 @@
-import { Connection, Transaction, VersionedTransaction } from '@solana/web3.js';
-
-// Type for parsed instruction data from Solana
-export type ParsedInstructionData = Record<string, unknown> | null;
-
 export interface TokenAccount {
   mint: string;
   amount: string;
@@ -16,43 +11,14 @@ export interface WalletTokens {
   tokens: TokenAccount[];
 }
 
-export interface BlockchainPort {
-  getConnection(): Connection;
-
-  // Transaction
-  signTransaction(
-    transaction: Transaction | VersionedTransaction,
-    privateKey: string
-  ): Promise<Transaction | VersionedTransaction>;
-
-  sendTransaction(transaction: Transaction | VersionedTransaction): Promise<string>;
-
-  confirmTransaction(signature: string): Promise<boolean>;
-
-  // Wallet
-  getBalance(address: string): Promise<number>;
-  getTokenBalance(address: string, mint: string): Promise<number>;
-
-  // Scanning
-  getSignaturesForAddress(
-    address: string,
-    options?: { before?: string; limit?: number }
-  ): Promise<SignatureInfo[]>;
-
-  getParsedTransaction(signature: string): Promise<ParsedTransaction | null>;
-}
-
 export interface SolanaRpcPort {
   getTokenAccounts(walletAddress: string): Promise<WalletTokens>;
 }
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export type TransactionError = any;
-
 export interface SignatureInfo {
   signature: string;
   slot: number;
-  err: TransactionError | null;
+  err: unknown;
   memo: string | null;
   blockTime?: number;
   confirmationStatus?: string;
@@ -69,7 +35,7 @@ export interface ParsedTransaction {
       }>;
       instructions: Array<{
         programId: string;
-        parsed?: ParsedInstructionData;
+        parsed?: Record<string, unknown> | null;
         accounts?: string[];
         data?: string;
       }>;
@@ -77,7 +43,7 @@ export interface ParsedTransaction {
     signatures: string[];
   };
   meta: {
-    err: TransactionError | null;
+    err: unknown;
     fee: number;
     preBalances: number[];
     postBalances: number[];

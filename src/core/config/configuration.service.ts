@@ -2,7 +2,7 @@ import * as fs from 'fs';
 import * as yaml from 'js-yaml';
 import * as path from 'path';
 import { z } from 'zod';
-import { PathManager } from './path.manager';
+import { PathManager } from './path-manager';
 
 const PathsSchema = z.object({
   data: z.string(),
@@ -191,28 +191,8 @@ export class ConfigurationService {
     return this.config.database?.url || '';
   }
 
-  getLogLevel(): string {
-    return this.config.logging?.level || 'info';
-  }
-
-  getJupiterBaseUrl(): string {
-    return this.config.jupiter?.baseUrl || '';
-  }
-
   getJupiterApiKey(): string {
     return this.config.jupiter?.apiKey || '';
-  }
-
-  getSolanaRpcUrl(): string {
-    return this.config.solana?.rpcUrl || '';
-  }
-
-  getDefaultSlippageBps(): number {
-    return this.config.trading?.defaultSlippageBps || 100;
-  }
-
-  getMaxSlippageBps(): number {
-    return this.config.trading?.maxSlippageBps || 500;
   }
 
   private static instance: ConfigurationService | null = null;

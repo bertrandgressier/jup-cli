@@ -148,13 +148,6 @@ export class MasterPasswordService {
   }
 
   /**
-   * Check if session is authenticated (session key cached)
-   */
-  isAuthenticated(): boolean {
-    return this.cachedSessionKey !== null;
-  }
-
-  /**
    * Clear cached session key (logout)
    */
   clearSession(): void {

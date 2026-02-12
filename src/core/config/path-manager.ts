@@ -39,10 +39,6 @@ export class PathManager {
     return path.join(this.getLogsDir(), 'jup-cli.log');
   }
 
-  getCacheDir(): string {
-    return path.join(this.dataDir, 'cache');
-  }
-
   ensureDirectories(): void {
     fs.mkdirSync(path.join(this.dataDir, 'data'), { recursive: true });
     fs.mkdirSync(path.join(this.dataDir, 'logs'), { recursive: true });
@@ -55,10 +51,6 @@ export class PathManager {
         // Ignore permission errors
       }
     }
-  }
-
-  exists(): boolean {
-    return fs.existsSync(this.dataDir);
   }
 
   isInitialized(): boolean {

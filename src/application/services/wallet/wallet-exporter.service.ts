@@ -1,4 +1,3 @@
-import { Wallet } from '../../../domain/entities/wallet.entity';
 import { WalletRepository } from '../../../domain/repositories/wallet.repository';
 import { keyEncryptionService } from '../security/key-encryption.service';
 import {
@@ -38,21 +37,5 @@ export class WalletExporterService {
     );
 
     return privateKey;
-  }
-
-  async exportWalletInfo(walletId: string): Promise<Partial<Wallet>> {
-    const wallet = await this.walletRepo.findById(walletId);
-    if (!wallet) {
-      throw new WalletNotFoundError(walletId);
-    }
-
-    return {
-      id: wallet.id,
-      name: wallet.name,
-      address: wallet.address,
-      createdAt: wallet.createdAt,
-      lastUsed: wallet.lastUsed,
-      isActive: wallet.isActive,
-    };
   }
 }

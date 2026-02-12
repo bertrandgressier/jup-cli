@@ -102,10 +102,10 @@ describe('CLI Integration Tests', () => {
       const firstWallet = wallets[0];
 
       expect(firstWallet).toBeDefined();
-      const foundWallet = await walletManager.getWallet(firstWallet!.id);
+      const foundWallet = await walletManager.getWallet(firstWallet?.id ?? '');
 
       expect(foundWallet).toBeDefined();
-      expect(foundWallet.id).toBe(firstWallet!.id);
+      expect(foundWallet.id).toBe(firstWallet?.id);
     });
   });
 

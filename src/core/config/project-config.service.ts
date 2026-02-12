@@ -1,7 +1,7 @@
 import * as fs from 'fs';
 import { execSync } from 'child_process';
 import { ConfigurationService } from './configuration.service';
-import { PathManager } from './path.manager';
+import { PathManager } from './path-manager';
 import { PrismaClient } from '@prisma/client';
 
 export interface InitOptions {
@@ -77,10 +77,6 @@ export class ProjectConfigurationService {
 
   getPathManager(): PathManager {
     return this.pathManager;
-  }
-
-  getConfigurationService(): ConfigurationService {
-    return this.configService;
   }
 
   isInitialized(): boolean {

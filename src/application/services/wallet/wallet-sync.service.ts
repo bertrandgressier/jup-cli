@@ -7,11 +7,6 @@ export interface PriceProvider {
   getPrice(mints: string[]): Promise<{ mint: string; price: number; timestamp: Date }[]>;
 }
 
-export interface SyncResult {
-  balancesFound: number;
-  totalValue: number;
-}
-
 export interface WalletState {
   address: string;
   solBalance: number;
