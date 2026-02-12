@@ -1,0 +1,70 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+// === Configuration ===
+
+model MasterPassword {
+  id                    Int      @id @default(1)
+  hash                  String   // Hash Argon2id du mot de passe maître
+  salt                  String   // Salt utilisé pour le hash
+
+  // Session Key Persistante (permet l'autonomie de l'agent)
+  encryptedSessionKey   String   // Session key chiffrée (AES-256-GCM)
+  sessionNonce          String   // Nonce pour déchiffrement session key
+  sessionSalt           String   // Salt pour dérivation session key
+
+  createdAt             DateTime @default(now())
+  updatedAt             DateTime @updatedAt
+}
+
+// === Wallets ===
+// Stockage minimal: uniquement les données de sécurité
+
+model Wallet {
+  id          String   @id @default(uuid()) // UUID opaque
+  name        String                           // Nom donné par l'utilisateur
+  address     String   @unique                 // Adresse publique Solana
+  encryptedKey String                          // Clé privée chiffrée (AES-256-GCM)
+  keyNonce    String                           // Nonce pour le déchiffrement
+  keySalt     String                           // Salt pour la dérivation de clé
+  keyAuthTag  String                           // Auth tag pour AES-256-GCM
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  lastUsed    DateTime?
+
+  // Relations
+  costBasis   CostBasis[] // Coût moyen par token (pour PnL)
+
+  @@index([address])
+  @@index([isActive])
+}
+
+// === Cost Basis ===
+// UNIQUEMENT pour PnL: stocke le prix d'achat moyen par token
+// Tout le reste (solde, prix actuel) est récupéré via API Jupiter
+
+model CostBasis {
+  id              String   @id @default(uuid())
+  walletId        String
+  wallet          Wallet   @relation(fields: [walletId], references: [id])
+
+  mint            String   // Token address
+  symbol          String?  // Symbole (SOL, USDC, etc.)
+  
+  // Coût moyen d'acquisition (CRITIQUE pour PnL)
+  avgPriceUsd     String   // Prix moyen d'achat (stored as string for precision)
+  totalAcquired   String   // Quantité totale achetée (stored as string for precision)
+  totalCostUsd    String   // Coût total en USD (stored as string for precision)
+
+  updatedAt       DateTime @updatedAt
+
+  @@unique([walletId, mint]) // Une entrée par token par wallet
+  @@index([walletId])
+  @@index([mint])
+}

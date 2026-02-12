@@ -1,0 +1,110 @@
+# Dependencies
+node_modules/
+package-lock.json
+yarn.lock
+pnpm-lock.yaml
+
+# Build output
+dist/
+build/
+*.tsbuildinfo
+
+# Environment variables
+.env
+.env.local
+.env.*.local
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# Testing
+coverage/
+.nyc_output/
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+lerna-debug.log*
+
+# Runtime data
+pids/
+*.pid
+*.seed
+*.pid.lock
+
+# OS
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# CLI Data (user-specific)
+*.db
+*.db-journal
+prisma/data/
+
+# Session keys and sensitive data
+**/session/key
+**/*.key
+**/*.pem
+
+# Secrets (CRITICAL - never commit)
+secrets/
+
+# Cache
+cache/
+.npm/
+.eslintcache
+.prettiercache
+
+# Temporary directories and files
+tmp/
+temp/
+.tmp/
+*.tmp
+*.temp
+
+# Test fixtures (generated at runtime)
+tests/integration/fixtures/e2e-test-data/
+tests/integration/fixtures/uninitialized/
+tests/integration/fixtures/no-api-key/
+tests/fixtures/
+
+# Generated files
+*.generated.ts
+*.generated.js
+
+# Backup files
+*.bak
+*.backup
+
+# Local config overrides
+config.local.yaml
+config.*.local.yaml
+
+# Database files
+*.sqlite
+*.sqlite3
+
+# Test artifacts
+test-results/
+playwright-report/
+playwright/.cache/
+
+# Sentry
+.sentryclirc
+
+# Misc
+.vercel
+.netlify

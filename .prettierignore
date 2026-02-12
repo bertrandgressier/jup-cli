@@ -1,0 +1,46 @@
+# Dependencies
+node_modules/
+
+# Build output
+dist/
+
+# Coverage
+coverage/
+
+# Cache
+.npm/
+cache/
+
+# Database
+*.db
+*.db-journal
+prisma/data/
+
+# Logs
+*.log
+logs/
+
+# Environment
+.env
+.env.*
+
+# Secrets
+secrets/
+
+# Test fixtures
+tests/integration/fixtures/
+tests/fixtures/
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Misc
+*.tmp
+*.temp
