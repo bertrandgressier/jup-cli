@@ -63,8 +63,13 @@ jobs:
     - name: Generate Prisma client
       run: pnpm prisma:generate
     
+    - name: Build TypeScript
+      run: pnpm build
+    
     - name: Run tests
       run: pnpm test:coverage
+      env:
+        DATABASE_URL: "file:./test.db"
     
     - name: Upload coverage to Codecov
       uses: codecov/codecov-action@v5
