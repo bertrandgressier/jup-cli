@@ -271,19 +271,22 @@ export function createWalletCommands(
 
         if (state.tokens.length > 0) {
           console.log(chalk.bold('📈 Token Balances'));
-          console.log(chalk.gray('─'.repeat(70)));
+          console.log(chalk.gray('─'.repeat(95)));
           console.log(
-            `${chalk.gray('Token'.padEnd(12))} ${chalk.gray('Amount'.padEnd(15))} ${chalk.gray('Price'.padEnd(12))} ${chalk.gray('Value')}`
+            `${chalk.gray('Token'.padEnd(8))} ${chalk.gray('Mint Address'.padEnd(45))} ${chalk.gray('Amount'.padEnd(14))} ${chalk.gray('Price'.padEnd(10))} ${chalk.gray('Value')}`
           );
-          console.log(chalk.gray('─'.repeat(70)));
+          console.log(chalk.gray('─'.repeat(95)));
 
           for (const token of state.tokens) {
             const symbol = token.symbol ?? token.mint.slice(0, 8) + '...';
-            const amount = token.amount.toFixed(4).padEnd(15);
-            const price = '$' + token.price.toFixed(2).padEnd(10);
+            const mintDisplay = token.mint.padEnd(45);
+            const amount = token.amount.toFixed(4).padEnd(14);
+            const price = '$' + token.price.toFixed(2).padEnd(8);
             const value = '$' + token.value.toFixed(2);
 
-            console.log(`${symbol.padEnd(12)} ${amount} ${price} ${value}`);
+            console.log(
+              `${chalk.cyan(symbol.padEnd(8))} ${chalk.dim(mintDisplay)} ${amount} ${price} ${value}`
+            );
           }
           console.log();
         }
