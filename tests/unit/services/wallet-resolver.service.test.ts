@@ -68,7 +68,9 @@ describe('WalletResolverService', () => {
       });
 
       it('should resolve wallet by name with different case', async () => {
-        mockRepo.findByName.mockResolvedValueOnce(wallets[0]!);
+        const firstWallet = wallets[0];
+        if (!firstWallet) throw new Error('Test setup failed');
+        mockRepo.findByName.mockResolvedValueOnce(firstWallet);
         const wallet = await resolver.resolve('Trading');
         expect(wallet.name).toBe('Trading');
       });
