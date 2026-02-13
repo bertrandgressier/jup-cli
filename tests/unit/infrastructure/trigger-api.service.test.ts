@@ -36,12 +36,15 @@ describe('TriggerApiService', () => {
       });
 
       expect(mockClient.post).toHaveBeenCalledWith('/trigger/v1/createOrder', {
+        payer: 'wallet-address',
         maker: 'wallet-address',
-        makingAmount: '1000000000',
-        takingAmount: '200000000',
         inputMint: 'SOL-MINT',
         outputMint: 'USDC-MINT',
-        expiredAt: undefined,
+        params: {
+          makingAmount: '1000000000',
+          takingAmount: '200000000',
+          expiredAt: undefined,
+        },
       });
       expect(result.orderId).toBe('order-123');
     });
@@ -85,12 +88,15 @@ describe('TriggerApiService', () => {
       });
 
       expect(mockClient.post).toHaveBeenCalledWith('/trigger/v1/createOrder', {
+        payer: 'wallet-address',
         maker: 'wallet-address',
-        makingAmount: '1000000000',
-        takingAmount: '200000000',
         inputMint: 'SOL-MINT',
         outputMint: 'USDC-MINT',
-        expiredAt: 1735689600,
+        params: {
+          makingAmount: '1000000000',
+          takingAmount: '200000000',
+          expiredAt: 1735689600,
+        },
       });
     });
   });
