@@ -40,6 +40,11 @@ export interface UltraExecuteResponse {
   slot?: number;
   error?: string;
   code?: string;
+  details?: {
+    reason?: string;
+    message?: string;
+    [key: string]: unknown;
+  };
   result?: {
     inputAccount?: string;
     outputAccount?: string;
@@ -101,17 +106,30 @@ export class UltraApiService {
         requestId,
       });
 
+      LoggerService.getInstance().debug('Ultra execute response', {
+        status: response.status,
+        error: response.error,
+        code: response.code,
+        details: response.details,
+      });
+
       if (response.status === 'Failed' || response.error) {
-        const errorMessage = response.error || `Swap failed with status: ${response.status}`;
+        const errorMessage =
+          response.details?.reason ||
+          response.details?.message ||
+          response.error ||
+          `Swap failed with status: ${response.status}`;
         LoggerService.getInstance().error('Ultra order execution failed', undefined, {
           status: response.status,
           error: response.error,
           code: response.code,
+          details: response.details,
         });
         throw new JupiterApiError(errorMessage, 400, {
           status: response.status,
           error: response.error,
           code: response.code,
+          details: response.details,
           signature: response.signature,
         });
       }

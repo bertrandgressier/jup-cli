@@ -16,17 +16,14 @@ import { TokenInfoService } from '../../../../application/services/token-info.se
 import { SessionService } from '../../../../core/session/session.service';
 import { JupiterApiError } from '../../../../core/errors/api.errors';
 
-function getFriendlyErrorMessage(error: string): string {
+function getFriendlyErrorMessage(error: string): { message: string; hint?: string } {
   if (error.includes('Reached end of buffer') || error.includes('unexpectedly')) {
-    return 'Transaction simulation failed. This usually means insufficient token balance or account does not exist.';
+    return {
+      message: error,
+      hint: 'This usually means insufficient token balance or account does not exist.',
+    };
   }
-  if (error.includes('insufficient') && error.includes('balance')) {
-    return 'Insufficient balance to complete this swap.';
-  }
-  if (error.includes('slippage') || error.includes('Slippage')) {
-    return 'Slippage tolerance exceeded. Try increasing slippage with --slippage option.';
-  }
-  return error;
+  return { message: error };
 }
 
 function checkJupiterApiKey(dataDir: string | undefined): boolean {
@@ -216,17 +213,17 @@ export function createTradeCommands(
         }
       } catch (error) {
         spinner.fail('Swap failed');
-        if (error instanceof JupiterApiError) {
-          const friendlyMessage = getFriendlyErrorMessage(error.message);
-          console.error(chalk.red(`\n❌ ${friendlyMessage}`));
-          if (error.details?.code) {
-            console.error(chalk.dim(`   Code: ${error.details.code}`));
-          }
-        } else {
-          const friendlyMessage = getFriendlyErrorMessage(
-            error instanceof Error ? error.message : 'Unknown error'
-          );
-          console.error(chalk.red(`\n❌ ${friendlyMessage}`));
+        const errorObj = getFriendlyErrorMessage(
+          error instanceof JupiterApiError || error instanceof Error
+            ? error.message
+            : 'Unknown error'
+        );
+        console.error(chalk.red(`\n❌ ${errorObj.message}`));
+        if (errorObj.hint) {
+          console.error(chalk.dim(`   Hint: ${errorObj.hint}`));
+        }
+        if (error instanceof JupiterApiError && error.details?.code) {
+          console.error(chalk.dim(`   Code: ${error.details.code}`));
         }
         process.exit(1);
       }
