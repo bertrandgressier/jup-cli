@@ -1,3 +1,10 @@
+## [2.0.8](https://github.com/bertrandgressier/jup-cli/compare/v2.0.7...v2.0.8) (2026-02-13)
+
+### Bug Fixes
+
+- update CLI help messages to use correct command name (jup-cli) ([4398404](https://github.com/bertrandgressier/jup-cli/commit/439840401e34dfd13da84b1669896eb7cd9044c2))
+- update husky pre-commit hook to v9 format ([5d48ee7](https://github.com/bertrandgressier/jup-cli/commit/5d48ee75056feeb6ba60cbbd4b3b6fa81f531e2e))
+
 ## [2.0.7](https://github.com/bertrandgressier/jup-cli/compare/v2.0.6...v2.0.7) (2026-02-12)
 
 ### Bug Fixes
