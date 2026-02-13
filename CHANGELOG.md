@@ -1,3 +1,11 @@
+## [2.2.1](https://github.com/bertrandgressier/jup-cli/compare/v2.2.0...v2.2.1) (2026-02-13)
+
+### Bug Fixes
+
+- improve error handling for swap failures ([a82037d](https://github.com/bertrandgressier/jup-cli/commit/a82037d012ff9e59351f7cd543f9e756c55f4876))
+- show API error message with optional hint ([d777059](https://github.com/bertrandgressier/jup-cli/commit/d777059f115c998672078886e0fa5469c80b0552))
+- validate order transaction is not empty before signing ([308c6ae](https://github.com/bertrandgressier/jup-cli/commit/308c6ae6ae62cf3d2ef3ebac56c7854f35df0924))
+
 # [2.2.0](https://github.com/bertrandgressier/jup-cli/compare/v2.1.0...v2.2.0) (2026-02-13)
 
 ### Bug Fixes
