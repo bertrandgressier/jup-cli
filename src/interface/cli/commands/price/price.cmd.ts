@@ -5,9 +5,47 @@ import { PrismaClient } from '@prisma/client';
 import { UltraApiService } from '../../../../infrastructure/jupiter-api/ultra/ultra-api.service';
 import { ConfigurationService } from '../../../../core/config/configuration.service';
 
+const MINT_LENGTH = 32;
+
+function isMintAddress(value: string): boolean {
+  return value.length >= MINT_LENGTH && /^[1-9A-HJ-NP-Za-km-z]+$/.test(value);
+}
+
 function checkJupiterApiKey(dataDir: string | undefined): boolean {
   const configService = new ConfigurationService(dataDir);
   return !!configService.getConfig().jupiter.apiKey;
+}
+
+async function resolveTokenIdentifiers(
+  identifiers: string[],
+  ultraApi: UltraApiService
+): Promise<{ mints: string[]; symbolMap: Map<string, string> }> {
+  const mints: string[] = [];
+  const symbolMap = new Map<string, string>();
+
+  for (const identifier of identifiers) {
+    if (isMintAddress(identifier)) {
+      mints.push(identifier);
+    } else {
+      try {
+        const searchResults = await ultraApi.searchTokens(identifier);
+        if (searchResults.length > 0) {
+          const exactMatch = searchResults.find(
+            (t) => t.symbol.toUpperCase() === identifier.toUpperCase()
+          );
+          const token = exactMatch ?? searchResults[0];
+          if (token) {
+            mints.push(token.address);
+            symbolMap.set(token.address, token.symbol);
+          }
+        }
+      } catch {
+        mints.push(identifier);
+      }
+    }
+  }
+
+  return { mints, symbolMap };
 }
 
 export function createPriceCommands(
@@ -18,7 +56,6 @@ export function createPriceCommands(
 
   const ultraApi = new UltraApiService();
 
-  // Get price
   price
     .command('get')
     .description('Get price of tokens')
@@ -34,19 +71,12 @@ export function createPriceCommands(
       }
     })
     .action(async (tokens, options) => {
-      const spinner = ora('Fetching prices...').start();
+      const spinner = ora('Resolving tokens...').start();
 
       try {
-        // Handle common symbols
-        const mints = tokens.map((t: string) => {
-          const upper = t.toUpperCase();
-          if (upper === 'SOL') return 'So11111111111111111111111111111111111111112';
-          if (upper === 'USDC') return 'EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v';
-          if (upper === 'USDT') return 'Es9vMFrzaCERmJfrF4H2FYD4KCoNkY11McCe8BenwNYB';
-          if (upper === 'BONK') return 'DezXAZ8z7PnrnRJjz3wXBoRgixCa6xjnB7YaB1pPB263';
-          return t;
-        });
+        const { mints, symbolMap } = await resolveTokenIdentifiers(tokens, ultraApi);
 
+        spinner.text = 'Fetching prices...';
         const prices = await ultraApi.getPrice(mints);
 
         spinner.stop();
@@ -68,13 +98,16 @@ export function createPriceCommands(
         }
 
         console.log(chalk.bold('\n💰 Prices\n'));
-        console.log(`${chalk.gray('Token'.padEnd(44))} ${chalk.gray('Price (USD)')}`);
-        console.log(chalk.gray('─'.repeat(65)));
+        console.log(
+          `${chalk.gray('Token'.padEnd(8))} ${chalk.gray('Mint Address'.padEnd(45))} ${chalk.gray('Price (USD)')}`
+        );
+        console.log(chalk.gray('─'.repeat(70)));
 
         for (const price of prices) {
-          const displayMint = price.mint.slice(0, 42).padEnd(44);
+          const symbol = symbolMap.get(price.mint) ?? price.mint.slice(0, 8) + '...';
+          const mintDisplay = price.mint.padEnd(45);
           const priceStr = price.price > 0 ? `$${price.price.toFixed(6)}` : chalk.gray('N/A');
-          console.log(`${chalk.cyan(displayMint)} ${priceStr}`);
+          console.log(`${chalk.cyan(symbol.padEnd(8))} ${chalk.dim(mintDisplay)} ${priceStr}`);
         }
 
         console.log();
@@ -86,7 +119,6 @@ export function createPriceCommands(
       }
     });
 
-  // Search tokens
   price
     .command('search')
     .description('Search for tokens')
