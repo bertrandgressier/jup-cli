@@ -13,10 +13,15 @@ import { MasterPasswordService } from '../../../../application/services/security
 import { TokenInfoService } from '../../../../application/services/token-info.service';
 import { PrismaWalletRepository } from '../../../../infrastructure/repositories/prisma-wallet.repository';
 import { PrismaTokenInfoRepository } from '../../../../infrastructure/repositories/prisma-token-info.repository';
+import { PrismaTradeRepository } from '../../../../infrastructure/repositories/prisma-trade.repository';
 import { solanaRpcService } from '../../../../infrastructure/solana/solana-rpc.service';
 import { ultraApiService } from '../../../../infrastructure/jupiter-api/ultra/ultra-api.service';
+import { TriggerApiService } from '../../../../infrastructure/jupiter-api/trigger/trigger-api.service';
 import { PathManager } from '../../../../core/config/path-manager';
 import { SessionService } from '../../../../core/session/session.service';
+import { PnLService } from '../../../../application/services/pnl/pnl.service';
+import { TradeService } from '../../../../application/services/trade/trade.service';
+import { OrderSyncService } from '../../../../application/services/order/order-sync.service';
 
 export function createWalletCommands(
   getPrisma: () => PrismaClient,
@@ -241,6 +246,7 @@ export function createWalletCommands(
         const foundWallet = await walletResolver.resolve(walletIdentifier);
 
         const tokenInfoRepo = new PrismaTokenInfoRepository(prisma);
+        const tradeRepo = new PrismaTradeRepository(prisma);
         const tokenInfoService = new TokenInfoService(tokenInfoRepo, ultraApiService);
         const walletSync = new WalletSyncService(
           walletRepo,
@@ -249,6 +255,25 @@ export function createWalletCommands(
           tokenInfoService
         );
         const state = await walletSync.getWalletState(foundWallet.id);
+
+        const priceProvider = {
+          getPrice: async (mints: string[]) => ultraApiService.getPrice(mints),
+        };
+
+        const pnlService = new PnLService(tradeRepo, solanaRpcService, priceProvider);
+        const pnlResult = await pnlService.calculatePnL(foundWallet.id, foundWallet.address);
+
+        const tradeService = new TradeService(tradeRepo, priceProvider);
+        const recentTrades = await tradeService.getRecentTrades(foundWallet.id, 5);
+
+        const triggerApi = new TriggerApiService();
+        const orderSyncService = new OrderSyncService(
+          triggerApi,
+          tradeService,
+          priceProvider,
+          tokenInfoService
+        );
+        const activeOrders = await orderSyncService.getActiveOrdersWithPrices(foundWallet.address);
 
         spinner.stop();
 
@@ -267,30 +292,100 @@ export function createWalletCommands(
         console.log(
           `${'Total Value:'.padEnd(20)} ${chalk.bold('$' + state.totalValue.toFixed(2))}`
         );
+        if (pnlResult.totalUnrealizedPnl !== 0) {
+          const pnlColor = pnlResult.totalUnrealizedPnl >= 0 ? chalk.green : chalk.red;
+          const pnlSign = pnlResult.totalUnrealizedPnl >= 0 ? '+' : '';
+          console.log(
+            `${'Unrealized PnL:'.padEnd(20)} ${pnlColor(pnlSign + '$' + pnlResult.totalUnrealizedPnl.toFixed(2) + ' (' + pnlSign + pnlResult.totalUnrealizedPnlPercent.toFixed(1) + '%)')}`
+          );
+        }
         console.log();
 
         if (state.tokens.length > 0) {
           console.log(chalk.bold('📈 Token Balances'));
-          console.log(chalk.gray('─'.repeat(95)));
+          console.log(chalk.gray('─'.repeat(110)));
           console.log(
-            `${chalk.gray('Token'.padEnd(8))} ${chalk.gray('Mint Address'.padEnd(45))} ${chalk.gray('Amount'.padEnd(14))} ${chalk.gray('Price'.padEnd(10))} ${chalk.gray('Value')}`
+            `${chalk.gray('Token'.padEnd(8))} ${chalk.gray('Amount'.padEnd(14))} ${chalk.gray('Price'.padEnd(10))} ${chalk.gray('Value'.padEnd(12))} ${chalk.gray('PnL')}`
           );
-          console.log(chalk.gray('─'.repeat(95)));
+          console.log(chalk.gray('─'.repeat(110)));
 
           for (const token of state.tokens) {
             const symbol = token.symbol ?? token.mint.slice(0, 8) + '...';
-            const mintDisplay = token.mint.padEnd(45);
             const amount = token.amount.toFixed(4).padEnd(14);
             const price = '$' + token.price.toFixed(2).padEnd(8);
             const value = '$' + token.value.toFixed(2);
 
+            const tokenPnL = pnlResult.tokens.find((t) => t.mint === token.mint);
+            let pnlStr = chalk.dim('-');
+            if (tokenPnL && tokenPnL.tracked) {
+              const pnlValue = tokenPnL.unrealizedPnl;
+              const pnlSign = pnlValue >= 0 ? '+' : '';
+              pnlStr =
+                pnlValue >= 0
+                  ? chalk.green(pnlSign + '$' + pnlValue.toFixed(2))
+                  : chalk.red('-$' + Math.abs(pnlValue).toFixed(2));
+            } else if (tokenPnL && !tokenPnL.tracked) {
+              pnlStr = chalk.dim('(untracked)');
+            }
+
             console.log(
-              `${chalk.cyan(symbol.padEnd(8))} ${chalk.dim(mintDisplay)} ${amount} ${price} ${value}`
+              `${chalk.cyan(symbol.padEnd(8))} ${amount} ${price} ${value.padEnd(12)} ${pnlStr}`
             );
           }
           console.log();
         }
 
+        if (activeOrders.length > 0) {
+          console.log(chalk.bold(`⏳ Active Limit Orders (${activeOrders.length})`));
+          console.log(chalk.gray('─'.repeat(80)));
+          console.log(
+            `${chalk.gray('Input'.padEnd(15))} ${chalk.gray('Output'.padEnd(15))} ${chalk.gray('Target'.padEnd(12))} ${chalk.gray('Current'.padEnd(12))} ${chalk.gray('Diff')}`
+          );
+          console.log(chalk.gray('─'.repeat(80)));
+
+          for (const order of activeOrders) {
+            const inputStr = `${order.inputAmount} ${order.inputSymbol || '???'}`.slice(0, 14);
+            const outputStr = `${order.outputAmount} ${order.outputSymbol || '???'}`.slice(0, 14);
+            const target = `$${order.targetPrice.toFixed(2)}`;
+            const current = `$${order.currentPrice.toFixed(2)}`;
+            const diff =
+              order.diffPercent >= 0
+                ? chalk.green(`+${order.diffPercent.toFixed(1)}%`)
+                : chalk.red(`${order.diffPercent.toFixed(1)}%`);
+
+            console.log(
+              `${inputStr.padEnd(15)} ${outputStr.padEnd(15)} ${target.padEnd(12)} ${current.padEnd(12)} ${diff}`
+            );
+          }
+          console.log();
+        }
+
+        if (recentTrades.length > 0) {
+          console.log(chalk.bold('📋 Recent Trades'));
+          console.log(chalk.gray('─'.repeat(70)));
+          console.log(
+            `${chalk.gray('Date'.padEnd(18))} ${chalk.gray('Type'.padEnd(8))} ${chalk.gray('Input'.padEnd(18))} ${chalk.gray('Output')}`
+          );
+          console.log(chalk.gray('─'.repeat(70)));
+
+          for (const trade of recentTrades) {
+            const date =
+              trade.executedAt.toLocaleDateString() +
+              ' ' +
+              trade.executedAt.toLocaleTimeString().slice(0, 5);
+            const type = trade.type === 'swap' ? chalk.cyan('Swap') : chalk.magenta('Limit');
+            const inputStr = `${trade.inputAmount} ${trade.inputSymbol || '???'}`.slice(0, 17);
+            const outputStr = `${trade.outputAmount} ${trade.outputSymbol || '???'}`.slice(0, 17);
+
+            console.log(`${date.padEnd(18)} ${type.padEnd(8)} ${inputStr.padEnd(18)} ${outputStr}`);
+          }
+          console.log();
+          console.log(
+            chalk.dim("Use 'jupiter history -w " + foundWallet.name + "' for full trade history")
+          );
+        }
+
+        console.log();
         console.log(chalk.dim('Data fetched in real-time from Solana RPC + Jupiter API'));
         console.log();
       } catch (error) {
