@@ -31,8 +31,11 @@ export function createTradeCommands(
   trade
     .command('swap')
     .description('Swap tokens using Jupiter Ultra API')
-    .argument('<inputToken>', 'Input token (SOL, USDC, USDT, JUP, BONK or mint address)')
-    .argument('<outputToken>', 'Output token (SOL, USDC, USDT, JUP, BONK or mint address)')
+    .argument('<inputToken>', 'Input token symbol or mint address (e.g., SOL, USDC, or full mint)')
+    .argument(
+      '<outputToken>',
+      'Output token symbol or mint address (e.g., SOL, USDC, or full mint)'
+    )
     .argument('<amount>', 'Amount of input token to swap')
     .requiredOption('-w, --wallet <identifier>', 'Wallet identifier (number, name, or UUID)')
     .option('-s, --slippage <bps>', 'Slippage tolerance in basis points', '100')
