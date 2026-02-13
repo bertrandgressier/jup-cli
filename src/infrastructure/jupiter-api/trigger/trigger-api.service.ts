@@ -17,12 +17,15 @@ export class TriggerApiService {
 
   async createOrder(params: CreateOrderParams): Promise<CreateOrderResponse> {
     const response = await this.client.post<CreateOrderResponse>('/trigger/v1/createOrder', {
+      payer: params.maker,
       maker: params.maker,
-      makingAmount: params.makingAmount,
-      takingAmount: params.takingAmount,
       inputMint: params.inputMint,
       outputMint: params.outputMint,
-      expiredAt: params.expiredAt,
+      params: {
+        makingAmount: params.makingAmount,
+        takingAmount: params.takingAmount,
+        expiredAt: params.expiredAt,
+      },
     });
 
     return response;
