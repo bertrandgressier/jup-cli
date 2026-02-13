@@ -59,7 +59,7 @@ describe('Session Workflow', () => {
       const sessionKey = await sessionService.getSessionKey();
 
       expect(sessionKey).not.toBeNull();
-      expect(sessionKey!.length).toBe(64);
+      expect(sessionKey?.length).toBe(64);
     });
   });
 
@@ -72,7 +72,7 @@ describe('Session Workflow', () => {
       const sessionKey = await sessionService.getSessionKey();
       expect(sessionKey).not.toBeNull();
 
-      masterPasswordService.setSessionKey(sessionKey!);
+      masterPasswordService.setSessionKey(sessionKey ?? Buffer.alloc(0));
 
       const walletCreator = new WalletCreatorService(walletRepo, masterPasswordService);
       const wallet = await walletCreator.createWallet('Session Test Wallet');
@@ -98,10 +98,10 @@ describe('Session Workflow', () => {
       const wallets = await walletManager.getAllWallets();
       const firstWallet = wallets[0];
 
-      const foundWallet = await walletManager.getWallet(firstWallet!.id);
+      const foundWallet = await walletManager.getWallet(firstWallet?.id ?? '');
 
       expect(foundWallet).toBeDefined();
-      expect(foundWallet.id).toBe(firstWallet!.id);
+      expect(foundWallet.id).toBe(firstWallet?.id);
     });
   });
 
@@ -116,7 +116,7 @@ describe('Session Workflow', () => {
       const walletRepo = new PrismaWalletRepository(prisma);
       const walletManager = new WalletManagerService(walletRepo);
       const wallets = await walletManager.getAllWallets();
-      const walletId = wallets[0]!.id;
+      const walletId = wallets[0]?.id ?? '';
 
       const output = execSync(
         `node ${cliPath} --data-dir ${testDataDir} wallet export ${walletId} 2>&1 || true`
@@ -135,7 +135,7 @@ describe('Session Workflow', () => {
       const walletRepo = new PrismaWalletRepository(prisma);
       const walletManager = new WalletManagerService(walletRepo);
       const wallets = await walletManager.getAllWallets();
-      const walletId = wallets[0]!.id;
+      const walletId = wallets[0]?.id ?? '';
 
       const output = execSync(
         `node ${cliPath} --data-dir ${testDataDir} wallet export ${walletId} 2>&1 || true`
@@ -173,7 +173,7 @@ describe('Session Workflow', () => {
 
       const newKey = await sessionService.getSessionKey();
       expect(newKey).not.toBeNull();
-      expect(newKey!.equals(oldKey!)).toBe(false);
+      expect(newKey?.equals(oldKey ?? Buffer.alloc(0))).toBe(false);
     });
 
     it('should clear session', async () => {

@@ -5,7 +5,7 @@ import { randomBytes } from 'crypto';
 import { PrismaClient } from '@prisma/client';
 import { aesService } from '../crypto/encryption.service';
 import { argon2Service } from '../crypto/key-derivation.service';
-import { PathManager } from '../config/path.manager';
+import { PathManager } from '../config/path-manager';
 
 export interface SessionInfo {
   exists: boolean;

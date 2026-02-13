@@ -7,13 +7,9 @@ import {
 } from '@solana/web3.js';
 import { ConfigurationService } from '../../core/config/configuration.service';
 import { LoggerService } from '../../core/logger/logger.service';
-import {
-  BlockchainPort,
-  SignatureInfo,
-  ParsedTransaction,
-} from '../../application/ports/blockchain.port';
+import { SignatureInfo, ParsedTransaction } from '../../application/ports/blockchain.port';
 
-export class ConnectionService implements BlockchainPort {
+export class ConnectionService {
   private connection: Connection;
   private configService: ConfigurationService;
 

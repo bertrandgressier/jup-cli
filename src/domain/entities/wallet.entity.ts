@@ -48,10 +48,6 @@ export class Wallet {
     this._isActive = false;
   }
 
-  activate(): void {
-    this._isActive = true;
-  }
-
   private validateId(id: string): void {
     if (!id || id.trim().length === 0) {
       throw new Error('Wallet ID cannot be empty');

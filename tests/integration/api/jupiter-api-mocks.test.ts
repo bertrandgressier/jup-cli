@@ -42,10 +42,12 @@ describe('Jupiter API Mocks', () => {
       ]);
 
       expect(prices).toHaveLength(2);
-      expect(prices[0]!.mint).toBe('So11111111111111111111111111111111111111112');
-      expect(prices[0]!.price).toBe(150.5);
-      expect(prices[1]!.mint).toBe('EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v');
-      expect(prices[1]!.price).toBe(1.0);
+      expect(prices[0]).toBeDefined();
+      expect(prices[1]).toBeDefined();
+      expect(prices[0]?.mint).toBe('So11111111111111111111111111111111111111112');
+      expect(prices[0]?.price).toBe(150.5);
+      expect(prices[1]?.mint).toBe('EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v');
+      expect(prices[1]?.price).toBe(1.0);
     });
 
     it('should handle API errors gracefully', async () => {
@@ -147,8 +149,10 @@ describe('Jupiter API Mocks', () => {
       const tokens = await ultraApi.searchTokens('sol');
 
       expect(tokens).toHaveLength(2);
-      expect(tokens[0]!.symbol).toBe('SOL');
-      expect(tokens[1]!.symbol).toBe('USDC');
+      expect(tokens[0]).toBeDefined();
+      expect(tokens[1]).toBeDefined();
+      expect(tokens[0]?.symbol).toBe('SOL');
+      expect(tokens[1]?.symbol).toBe('USDC');
     });
 
     it('should return empty array for no results', async () => {

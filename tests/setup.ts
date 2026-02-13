@@ -1,16 +1,2 @@
-import { PrismaClient } from '@prisma/client';
-
-const prisma = new PrismaClient();
-
-export default prisma;
-
-// For testing
-export const createTestPrismaClient = () => {
-  return new PrismaClient({
-    datasources: {
-      db: {
-        url: 'file:./test.db',
-      },
-    },
-  });
-};
+// Test setup file
+// Intentionally empty - add global test setup here if needed

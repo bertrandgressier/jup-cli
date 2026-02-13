@@ -1,18 +1,6 @@
 import { LoggerService } from '../../core/logger/logger.service';
 import { NetworkError } from '../../core/errors/api.errors';
-
-export interface TokenAccount {
-  mint: string;
-  amount: string;
-  decimals: number;
-  uiAmount: number;
-}
-
-export interface WalletTokens {
-  address: string;
-  solBalance: number;
-  tokens: TokenAccount[];
-}
+import { SolanaRpcPort, TokenAccount, WalletTokens } from '../../application/ports/blockchain.port';
 
 // RPC Response Types
 interface TokenAmount {
@@ -52,10 +40,10 @@ const MAX_RETRIES = 3;
 const BASE_DELAY_MS = 1000;
 
 /**
- * Solana RPC Service - Utilise le RPC public pour scanner les tokens
- * Avec retry automatique et timeout
+ * Solana RPC Service - Uses public RPC to scan wallet tokens
+ * With automatic retry and timeout
  */
-export class SolanaRpcService {
+export class SolanaRpcService implements SolanaRpcPort {
   private rpcUrl: string;
   private maxRetries: number;
   private timeoutMs: number;

@@ -98,7 +98,8 @@ describe('Solana Blockchain Mocks', () => {
       );
 
       expect(signatures).toHaveLength(2);
-      expect(signatures[0]!.signature).toBe('5x28V9v...');
+      expect(signatures[0]).toBeDefined();
+      expect(signatures[0]?.signature).toBe('5x28V9v...');
       expect(mockConnection.getSignaturesForAddress).toHaveBeenCalledWith(expect.anything(), {
         before: undefined,
         limit: 10,

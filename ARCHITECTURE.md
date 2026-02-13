@@ -1,117 +1,116 @@
-# Architecture Jup CLI
+# Jup CLI Architecture
 
-## Vue d'ensemble
+## Overview
 
-Cette CLI Jupiter suit les principes de la **Clean Architecture** avec une séparation claire des responsabilités en couches concentriques. L'objectif est de fournir une interface sécurisée pour interagir avec les API Jupiter, avec une gestion multi-wallets et un suivi précis du PnL.
+This Jupiter CLI follows **Clean Architecture** principles with a clear separation of responsibilities across concentric layers. The goal is to provide a secure interface for interacting with Jupiter APIs, with multi-wallet management and precise PnL tracking.
 
-## Principe de Sécurité Fondamental
+## Core Security Principle
 
-**Règle d'or : Le LLM/Agent ne doit JAMAIS avoir accès aux clés privées en clair**
+**Golden Rule: The LLM/Agent must NEVER have access to plaintext private keys**
 
-### Modèle de Session Globale
+### Global Session Model
 
 ```
 ┌─────────────────────────────────────────────────────────────────┐
-│                    SETUP (humain avec mot de passe)              │
+│                    SETUP (human with password)                    │
 ├─────────────────────────────────────────────────────────────────┤
 │  $ jupiter init --password <pwd>                                 │
-│      → Crée la base de données                                   │
-│      → Génère une SESSION_KEY stockée dans ~/.jupiter/session    │
+│      → Creates the database                                      │
+│      → Generates a SESSION_KEY stored in ~/.jupiter/session      │
 │                                                                  │
 │  $ jupiter wallet create --name Trading --password <pwd>         │
-│      → Wallet chiffré, accessible via session                    │
+│      → Wallet encrypted, accessible via session                  │
 └─────────────────────────────────────────────────────────────────┘
                               ↓
 ┌─────────────────────────────────────────────────────────────────┐
-│                    AGENT (autonome, sans mot de passe)           │
+│                    AGENT (autonomous, no password)                │
 ├─────────────────────────────────────────────────────────────────┤
-│  ✅ Opérations AUTORISÉES avec session:                          │
+│  Allowed operations with session:                                │
 │     - jupiter wallet list                                        │
 │     - jupiter wallet show <id>                                   │
 │     - jupiter price get SOL USDC                                 │
-│     - jupiter trade swap USDC SOL 0.1 -w <id> -y                 │
+│     - jupiter trade swap USDC SOL 0.1 -w <id> -y                │
 │     - jupiter session status                                     │
 │                                                                  │
-│  ❌ Opérations PROTÉGÉES (mot de passe obligatoire):             │
-│     - jupiter wallet export <id>    → Expose la clé privée       │
-│     - jupiter wallet delete <id>    → Suppression irréversible   │
-│     - jupiter transfer <...>        → Transfert de fonds         │
+│  Protected operations (password required):                       │
+│     - jupiter wallet export <id>    → Exposes private key        │
+│     - jupiter wallet delete <id>    → Irreversible deletion      │
+│     - jupiter transfer <...>        → Outbound fund transfer     │
 └─────────────────────────────────────────────────────────────────┘
 ```
 
-### Caractéristiques de la Session
+### Session Characteristics
 
-| Propriété    | Valeur                                        |
-| ------------ | --------------------------------------------- |
-| Portée       | Globale (une session pour tous les wallets)   |
-| Expiration   | Jamais (jusqu'à régénération manuelle)        |
-| Stockage     | `~/.jupiter/session/key` (permissions 600)    |
-| Régénération | `jupiter session regenerate --password <pwd>` |
+| Property   | Value                                         |
+| ---------- | --------------------------------------------- |
+| Scope      | Global (one session for all wallets)          |
+| Expiration | Never (until manual regeneration)             |
+| Storage    | `~/.jupiter/session/key` (permissions 600)    |
+| Regenerate | `jupiter session regenerate --password <pwd>` |
 
-### Commandes par Niveau d'Autorisation
+### Commands by Authorization Level
 
-#### Niveau 1: Accessible à l'Agent (Session ou Password)
+#### Level 1: Agent-Accessible (Session or Password)
 
-| Commande               | Description                |
-| ---------------------- | -------------------------- |
-| `wallet list`          | Lister les wallets         |
-| `wallet show <id>`     | Afficher détails et soldes |
-| `price get <tokens>`   | Obtenir les prix           |
-| `price search <query>` | Rechercher un token        |
-| `trade swap <...>`     | Effectuer un swap          |
-| `config show`          | Afficher la configuration  |
-| `session status`       | État de la session         |
+| Command                | Description               |
+| ---------------------- | ------------------------- |
+| `wallet list`          | List wallets              |
+| `wallet show <id>`     | Show details and balances |
+| `price get <tokens>`   | Get prices                |
+| `price search <query>` | Search for a token        |
+| `trade swap <...>`     | Execute a swap            |
+| `config show`          | Show configuration        |
+| `session status`       | Session status            |
 
-#### Niveau 2: Protégé (Password Obligatoire, Session Rejetée)
+#### Level 2: Protected (Password Required, Session Rejected)
 
-| Commande             | Description            | Raison                     |
-| -------------------- | ---------------------- | -------------------------- |
-| `wallet export <id>` | Exporter la clé privée | Expose les fonds           |
-| `wallet delete <id>` | Supprimer un wallet    | Irréversible               |
-| `transfer <...>`     | Transférer des fonds   | Mouvement de fonds sortant |
-| `session regenerate` | Régénérer la session   | Accès sécuritaire          |
+| Command              | Description        | Reason                 |
+| -------------------- | ------------------ | ---------------------- |
+| `wallet export <id>` | Export private key | Exposes funds          |
+| `wallet delete <id>` | Delete a wallet    | Irreversible           |
+| `transfer <...>`     | Transfer funds     | Outbound fund movement |
+| `session regenerate` | Regenerate session | Security access        |
 
-#### Niveau 3: Setup (Password Obligatoire)
+#### Level 3: Setup (Password Required)
 
-| Commande        | Description        |
+| Command         | Description        |
 | --------------- | ------------------ |
-| `init`          | Initialiser la CLI |
-| `wallet create` | Créer un wallet    |
-| `wallet import` | Importer un wallet |
+| `init`          | Initialize the CLI |
+| `wallet create` | Create a wallet    |
+| `wallet import` | Import a wallet    |
 
-## Structure du Projet
+## Project Structure
 
 ```
 jup-cli/
 ├── src/
-│   ├── core/                           # Couche transverse
+│   ├── core/                           # Cross-cutting concerns
 │   │   ├── config/
-│   │   │   ├── configuration.service.ts # Gestion de la configuration YAML
-│   │   │   ├── path.manager.ts          # Gestion des chemins
-│   │   │   └── project-config.service.ts # Configuration projet
+│   │   │   ├── configuration.service.ts # YAML configuration management
+│   │   │   ├── path-manager.ts          # Path management
+│   │   │   └── project-config.service.ts # Project configuration
 │   │   ├── errors/
-│   │   │   ├── wallet.errors.ts        # Erreurs spécifiques wallets
-│   │   │   ├── transaction.errors.ts   # Erreurs spécifiques transactions
-│   │   │   └── api.errors.ts           # Erreurs API Jupiter
+│   │   │   ├── wallet.errors.ts        # Wallet-specific errors
+│   │   │   └── api.errors.ts           # Jupiter API errors
 │   │   ├── logger/
-│   │   │   └── logger.service.ts       # Service de logging structuré
+│   │   │   └── logger.service.ts       # Structured logging service
 │   │   ├── crypto/
 │   │   │   ├── encryption.service.ts   # AES-256-GCM (IV 12 bytes)
 │   │   │   └── key-derivation.service.ts # Argon2id
 │   │   └── session/
-│   │       └── session.service.ts      # Gestion session globale
+│   │       └── session.service.ts      # Global session management
 │   │
-│   ├── domain/                         # Couche domaine
+│   ├── domain/                         # Domain layer
 │   │   ├── entities/
-│   │   │   ├── wallet.entity.ts        # Entité wallet
-│   │   │   └── cost-basis.entity.ts    # Calcul coût de base
+│   │   │   ├── wallet.entity.ts        # Wallet entity
+│   │   │   └── cost-basis.entity.ts    # Cost basis calculation
 │   │   └── repositories/
-│   │       └── wallet.repository.ts    # Interface repository
+│   │       └── wallet.repository.ts    # Repository interface
 │   │
-│   ├── application/                    # Couche application
+│   ├── application/                    # Application layer
 │   │   ├── ports/
-│   │   │   ├── jupiter-api.port.ts     # Interface API Jupiter
-│   │   │   └── blockchain.port.ts      # Interface blockchain
+│   │   │   ├── jupiter-api.port.ts     # Jupiter API interface
+│   │   │   └── blockchain.port.ts      # Blockchain interface
 │   │   └── services/
 │   │       ├── wallet/
 │   │       │   ├── wallet-manager.service.ts
@@ -124,17 +123,17 @@ jup-cli/
 │   │           ├── master-password.service.ts
 │   │           └── key-encryption.service.ts
 │   │
-│   ├── infrastructure/                 # Couche infrastructure
+│   ├── infrastructure/                 # Infrastructure layer
 │   │   ├── repositories/
 │   │   │   └── prisma-wallet.repository.ts
 │   │   ├── jupiter-api/
 │   │   │   ├── ultra/ultra-api.service.ts
-│   │   │   └── shared/jup-client.ts
+│   │   │   └── shared/jupiter-client.ts
 │   │   └── solana/
 │   │       ├── connection.service.ts
 │   │       └── solana-rpc.service.ts
 │   │
-│   └── interface/                      # Couche CLI
+│   └── interface/                      # CLI layer
 │       └── cli/commands/
 │           ├── init/init.cmd.ts
 │           ├── wallet/wallet.cmd.ts
@@ -151,58 +150,58 @@ jup-cli/
     └── unit/
 ```
 
-## Modèle de Sécurité Détaillé
+## Detailed Security Model
 
-### Flux d'Initialisation
+### Initialization Flow
 
 ```
 jupiter init --password <pwd>
     │
-    ├── 1. Créer ~/.jupiter/ (data, logs, session)
-    ├── 2. Créer base SQLite
-    ├── 3. Hasher le mot de passe (Argon2id)
-    ├── 4. Générer SESSION_KEY (64 bytes aléatoires)
-    ├── 5. Chiffrer SESSION_KEY avec mot de passe
-    ├── 6. Stocker dans ~/.jupiter/session/key
-    └── 7. Configurer API key si fournie
+    ├── 1. Create ~/.jupiter/ (data, logs, session)
+    ├── 2. Create SQLite database
+    ├── 3. Hash the password (Argon2id)
+    ├── 4. Generate SESSION_KEY (64 random bytes)
+    ├── 5. Encrypt SESSION_KEY with password
+    ├── 6. Store in ~/.jupiter/session/key
+    └── 7. Configure API key if provided
 ```
 
-### Flux de Commande Protégée (wallet export)
+### Protected Command Flow (wallet export)
 
 ```
 jupiter wallet export <id>
     │
-    ├── 1. Vérifier si session existe → ERREUR si oui
+    ├── 1. Check if session exists → ERROR if yes
     │      "This command requires password. Session not allowed."
     │
-    ├── 2. Demander mot de passe (interactif ou --password)
+    ├── 2. Prompt for password (interactive or --password)
     │
-    ├── 3. Vérifier le hash Argon2id
+    ├── 3. Verify the Argon2id hash
     │
-    ├── 4. Déchiffrer la clé privée
+    ├── 4. Decrypt the private key
     │
-    └── 5. Afficher la clé (avec avertissement)
+    └── 5. Display the key (with warning)
 ```
 
-### Flux de Commande Accessible (trade swap)
+### Agent-Accessible Command Flow (trade swap)
 
 ```
 jupiter trade swap USDC SOL 0.1 -w <id> -y
     │
-    ├── 1. Charger SESSION_KEY depuis ~/.jupiter/session/key
+    ├── 1. Load SESSION_KEY from ~/.jupiter/session/key
     │
-    ├── 2. Déchiffrer la clé privée du wallet avec SESSION_KEY
+    ├── 2. Decrypt the wallet private key with SESSION_KEY
     │
-    ├── 3. Obtenir l'ordre de swap (Jupiter Ultra API)
+    ├── 3. Get the swap order (Jupiter Ultra API)
     │
-    ├── 4. Signer la transaction
+    ├── 4. Sign the transaction
     │
-    ├── 5. Exécuter via Jupiter Ultra
+    ├── 5. Execute via Jupiter Ultra
     │
-    └── 6. Zero-out de la clé privée en mémoire
+    └── 6. Zero-out the private key in memory
 ```
 
-## Schéma de Données (Prisma)
+## Data Schema (Prisma)
 
 ```prisma
 generator client {
@@ -216,11 +215,11 @@ datasource db {
 
 model MasterPassword {
   id                  Int      @id @default(1)
-  hash                String   // Hash Argon2id du mot de passe
-  salt                String   // Salt pour le hash
-  encryptedSessionKey String   // Session key chiffrée avec mot de passe
-  sessionNonce        String   // Nonce AES-256-GCM
-  sessionSalt         String   // Salt pour dérivation
+  hash                String   // Argon2id hash of the master password
+  salt                String   // Salt used for hashing
+  encryptedSessionKey String   // Session key encrypted with password
+  sessionNonce        String   // AES-256-GCM nonce
+  sessionSalt         String   // Derivation salt
   createdAt           DateTime @default(now())
   updatedAt           DateTime @updatedAt
 }
@@ -229,10 +228,10 @@ model Wallet {
   id           String    @id @default(uuid())
   name         String
   address      String    @unique
-  encryptedKey String    // Clé privée chiffrée avec session key
+  encryptedKey String    // Private key encrypted with session key
   keyNonce     String
   keySalt      String
-  keyAuthTag   String    // Auth tag AES-256-GCM
+  keyAuthTag   String    // AES-256-GCM auth tag
   isActive     Boolean   @default(true)
   createdAt    DateTime  @default(now())
   lastUsed     DateTime?
@@ -257,28 +256,28 @@ model CostBasis {
 }
 ```
 
-## API Jupiter Utilisées
+## Jupiter APIs Used
 
-### Ultra Swap API (Recommandée)
+### Ultra Swap API (Recommended)
 
-| Endpoint            | Méthode | Description                     |
-| ------------------- | ------- | ------------------------------- |
-| `/ultra/v1/order`   | GET     | Obtenir un ordre de swap        |
-| `/ultra/v1/execute` | POST    | Exécuter une transaction signée |
-| `/ultra/v1/search`  | GET     | Rechercher un token             |
+| Endpoint            | Method | Description                  |
+| ------------------- | ------ | ---------------------------- |
+| `/ultra/v1/order`   | GET    | Get a swap order             |
+| `/ultra/v1/execute` | POST   | Execute a signed transaction |
+| `/ultra/v1/search`  | GET    | Search for a token           |
 
 ### Price API V3
 
-| Endpoint    | Méthode | Description              |
-| ----------- | ------- | ------------------------ |
-| `/price/v3` | GET     | Prix de plusieurs tokens |
+| Endpoint    | Method | Description                    |
+| ----------- | ------ | ------------------------------ |
+| `/price/v3` | GET    | Get prices for multiple tokens |
 
 ## Technologies
 
-| Catégorie  | Technologie                    |
+| Category   | Technology                     |
 | ---------- | ------------------------------ |
-| Runtime    | Node.js 18+                    |
-| Langage    | TypeScript 5.3+                |
+| Runtime    | Node.js 20+                    |
+| Language   | TypeScript 5.3+                |
 | CLI        | Commander.js                   |
 | ORM        | Prisma                         |
 | Database   | SQLite                         |
@@ -286,59 +285,59 @@ model CostBasis {
 | HTTP       | axios                          |
 | Validation | Zod                            |
 
-## Commandes CLI
+## CLI Commands
 
-### Gestion des Sessions
+### Session Management
 
 ```bash
-# Voir l'état de la session
+# View session status
 jupiter session status
 
-# Régénérer la session (password requis)
+# Regenerate session (password required)
 jupiter session regenerate --password <pwd>
 
-# Supprimer la session
+# Clear session
 jupiter session clear
 ```
 
 ### Wallets
 
 ```bash
-# Créer (password requis)
+# Create (password required)
 jupiter wallet create --name "Trading" --password <pwd>
 
-# Lister (session OK)
+# List (session OK)
 jupiter wallet list
 
-# Voir détails (session OK)
+# View details (session OK)
 jupiter wallet show <id>
 
-# Importer (password requis)
+# Import (password required)
 jupiter wallet import --name "Main" --private-key <key> --password <pwd>
 
-# Exporter (password OBLIGATOIRE, session rejetée)
+# Export (password REQUIRED, session rejected)
 jupiter wallet export <id> --password <pwd>
 
-# Supprimer (password OBLIGIGATOIRE, session rejetée)
+# Delete (password REQUIRED, session rejected)
 jupiter wallet delete <id> --password <pwd>
 ```
 
 ### Trading (session OK)
 
 ```bash
-# Obtenir prix
+# Get prices
 jupiter price get SOL USDC
 
 # Swap (dry-run)
 jupiter trade swap USDC SOL 0.1 -w <id> --dry-run
 
-# Swap (exécuter)
+# Swap (execute)
 jupiter trade swap USDC SOL 0.1 -w <id> -y
 ```
 
 ## Tests
 
-### Tests d'Intégration Requis
+### Required Integration Tests
 
 ```typescript
 describe('Session Workflow', () => {
@@ -373,31 +372,31 @@ describe('Session Workflow', () => {
 });
 ```
 
-## Sécurité - Mesures Techniques
+## Security - Technical Measures
 
-| Mesure              | Implémentation                        |
-| ------------------- | ------------------------------------- |
-| Chiffrement clés    | AES-256-GCM (IV 12 bytes)             |
-| Dérivation          | Argon2id                              |
-| Session storage     | Fichier permissions 600               |
-| Zero-out mémoire    | Buffer.fill(0) après usage            |
-| Commandes protégées | Session rejetée, password obligatoire |
+| Measure            | Implementation                      |
+| ------------------ | ----------------------------------- |
+| Key encryption     | AES-256-GCM (IV 12 bytes)           |
+| Key derivation     | Argon2id                            |
+| Session storage    | File with permissions 600           |
+| Memory zero-out    | Buffer.fill(0) after use            |
+| Protected commands | Session rejected, password required |
 
 ## Roadmap
 
-### v1.0 (Actuel)
+### v1.0 (Current)
 
-- [x] Architecture DDD
-- [x] Système de session globale
-- [x] Commandes wallet CRUD
+- [x] DDD Architecture
+- [x] Global session system
+- [x] Wallet CRUD commands
 - [x] Trade swap via Jupiter Ultra
-- [x] Protection des commandes sensibles
-- [ ] Tests d'intégration complets
-- [ ] Documentation API
+- [x] Sensitive command protection
+- [ ] Complete integration tests
+- [ ] API documentation
 
-### v1.1 (Futur)
+### v1.1 (Future)
 
-- [ ] Transfers outbound
-- [ ] Calcul PnL
-- [ ] Ordres limit
+- [ ] Outbound transfers
+- [ ] PnL calculation
+- [ ] Limit orders
 - [ ] Multi-wallet portfolio

@@ -22,35 +22,4 @@ export class WalletManagerService {
 
     return wallet;
   }
-
-  async getWalletByAddress(address: string): Promise<Wallet | null> {
-    return this.walletRepo.findByAddress(address);
-  }
-
-  async walletExists(address: string): Promise<boolean> {
-    const wallet = await this.walletRepo.findByAddress(address);
-    return !!wallet;
-  }
-
-  async updateWalletName(id: string, name: string): Promise<Wallet> {
-    const wallet = await this.getWallet(id);
-    wallet.updateName(name);
-    return this.walletRepo.update(wallet);
-  }
-
-  async markWalletUsed(id: string): Promise<Wallet> {
-    const wallet = await this.getWallet(id);
-    wallet.markAsUsed();
-    return this.walletRepo.update(wallet);
-  }
-
-  async deleteWallet(id: string): Promise<void> {
-    const wallet = await this.getWallet(id);
-    wallet.deactivate();
-    await this.walletRepo.update(wallet);
-  }
-
-  async permanentlyDeleteWallet(id: string): Promise<void> {
-    await this.walletRepo.delete(id);
-  }
 }
