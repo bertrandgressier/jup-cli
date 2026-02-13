@@ -90,8 +90,22 @@ export class UltraApiService {
 
       const response = await this.client.get<UltraOrderResponse>(`${this.baseUrl}/order`, params);
 
+      if (!response.transaction || response.transaction.length === 0) {
+        LoggerService.getInstance().error('Empty transaction in order response', undefined, {
+          response: JSON.stringify(response).substring(0, 500),
+        });
+        throw new JupiterApiError(
+          'No transaction returned from Jupiter. This usually means insufficient balance or the swap cannot be routed.',
+          400,
+          { response }
+        );
+      }
+
       return response;
     } catch (error) {
+      if (error instanceof JupiterApiError) {
+        throw error;
+      }
       LoggerService.getInstance().error('Failed to get Ultra order', error as Error);
       throw error;
     }
