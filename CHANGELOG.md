@@ -1,3 +1,56 @@
+# [3.0.0](https://github.com/bertrandgressier/jup-cli/compare/v2.2.1...v3.0.0) (2026-02-14)
+
+### Bug Fixes
+
+- correct data handling in trading, PnL and limit orders ([6428c13](https://github.com/bertrandgressier/jup-cli/commit/6428c13856439a14202d1d5e61a893eb0d63c985))
+- **order:** improve limit order handling and trade recording ([5107fe8](https://github.com/bertrandgressier/jup-cli/commit/5107fe82349c61c55a8a44209a8d80514009be54))
+- **order:** use orderKey field for order ID display ([9e6ff8a](https://github.com/bertrandgressier/jup-cli/commit/9e6ff8a9e6691ba8ce61957118f56cd398ad92b2))
+- **trigger:** correct createOrder API request format ([05cd4a1](https://github.com/bertrandgressier/jup-cli/commit/05cd4a15b7dab75551ebc5e93696c923c9843b28))
+- **trigger:** use 'order' field from createOrder API response ([59df88b](https://github.com/bertrandgressier/jup-cli/commit/59df88ba271a9def5534f7d67ec803bc51baaf24))
+
+### Code Refactoring
+
+- remove PnL and local trade storage, keep only limit orders ([ed15b0c](https://github.com/bertrandgressier/jup-cli/commit/ed15b0c38fc9620190611ec809aaa0b58eccefcc))
+
+### Features
+
+- **cli:** add order, history, pnl commands ([a5fb6e5](https://github.com/bertrandgressier/jup-cli/commit/a5fb6e5ee332367fffa9b1f70ec267605268202f))
+- **cli:** enhance wallet show with PnL and orders, record trades on swap ([dbc584d](https://github.com/bertrandgressier/jup-cli/commit/dbc584ddd956654f6dc65cdcd225b30a4be78b27))
+- **db:** add Trade model, remove CostBasis ([7c98d79](https://github.com/bertrandgressier/jup-cli/commit/7c98d792622a60b5e215830650b845624e35abed))
+- **domain:** add Trade entity and TradeRepository interface ([564b991](https://github.com/bertrandgressier/jup-cli/commit/564b991956923062ed8da0b35d314f3650099251))
+- improve CLI output formatting and readability ([190e1aa](https://github.com/bertrandgressier/jup-cli/commit/190e1aa5505638043fa53e88a90605ab8cf49c9a))
+- **infra:** implement PrismaTradeRepository ([0ac6cdb](https://github.com/bertrandgressier/jup-cli/commit/0ac6cdb6944d175a350bbd598401e663a27eaf59))
+- **jupiter:** add Trigger API for limit orders ([5615ad9](https://github.com/bertrandgressier/jup-cli/commit/5615ad9d127796c7c93c209470763fdd228e70cc))
+- **services:** add PnLService for profit/loss calculation ([34784fc](https://github.com/bertrandgressier/jup-cli/commit/34784fce54ae50b01af8793e86f0e3d6915b63a5))
+- **services:** add TradeService for recording trades ([41c1a52](https://github.com/bertrandgressier/jup-cli/commit/41c1a52011af20c8d6bd672119d93fc4aff107d6))
+
+### BREAKING CHANGES
+
+- Removed local trade history and PnL calculation
+
+Removals:
+
+- Trade entity and repository (no local storage)
+- PnL service and commands (calculated from blockchain)
+- History commands (use Jupiter API directly)
+- Trade recording from swap command
+- PrismaTradeRepository
+
+Keep:
+
+- Limit orders (create/list/cancel) - no local storage needed
+- Order sync service - simplified to only fetch active orders
+- All fixes: orderKey, computeUnitPrice, decimal conversion
+
+Now all data comes from:
+
+- Solana RPC for balances
+- Jupiter API for orders and trades
+- No local database storage for trading data
+
+Tests: 150 passed
+Build: ✅
+
 ## [2.2.1](https://github.com/bertrandgressier/jup-cli/compare/v2.2.0...v2.2.1) (2026-02-13)
 
 ### Bug Fixes
