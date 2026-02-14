@@ -1,3 +1,9 @@
+# [3.1.0](https://github.com/bertrandgressier/jup-cli/compare/v3.0.0...v3.1.0) (2026-02-14)
+
+### Features
+
+- add token discovery, shield security analysis, and price v3 APIs ([0fc2011](https://github.com/bertrandgressier/jup-cli/commit/0fc201109caf233fe10491fa2f80d9c057f3541e))
+
 # [3.0.0](https://github.com/bertrandgressier/jup-cli/compare/v2.2.1...v3.0.0) (2026-02-14)
 
 ### Bug Fixes
