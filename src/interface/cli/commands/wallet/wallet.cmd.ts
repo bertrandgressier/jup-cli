@@ -312,27 +312,13 @@ export function createWalletCommands(
         }
 
         if (activeOrders.length > 0) {
-          console.log(chalk.bold(`⏳ Active Limit Orders (${activeOrders.length})`));
-          console.log(chalk.gray('─'.repeat(80)));
+          const totalBlocked = activeOrders.reduce((sum, o) => sum + o.inputUsdValue, 0);
           console.log(
-            `${chalk.gray('Input'.padEnd(15))} ${chalk.gray('Output'.padEnd(15))} ${chalk.gray('Target'.padEnd(12))} ${chalk.gray('Current'.padEnd(12))} ${chalk.gray('Diff')}`
+            chalk.bold(`⏳ Active Limit Orders: `) +
+              chalk.yellow(`${activeOrders.length}`) +
+              chalk.dim(` ($${totalBlocked.toFixed(2)} blocked) `) +
+              chalk.dim(`→ use 'jupiter order list -w ${foundWallet.name}' for details`)
           );
-          console.log(chalk.gray('─'.repeat(80)));
-
-          for (const order of activeOrders) {
-            const inputStr = `${order.inputAmount} ${order.inputSymbol || '???'}`.slice(0, 14);
-            const outputStr = `${order.outputAmount} ${order.outputSymbol || '???'}`.slice(0, 14);
-            const target = `$${order.targetPrice.toFixed(2)}`;
-            const current = `$${order.currentPrice.toFixed(2)}`;
-            const diff =
-              order.diffPercent >= 0
-                ? chalk.green(`+${order.diffPercent.toFixed(1)}%`)
-                : chalk.red(`${order.diffPercent.toFixed(1)}%`);
-
-            console.log(
-              `${inputStr.padEnd(15)} ${outputStr.padEnd(15)} ${target.padEnd(12)} ${current.padEnd(12)} ${diff}`
-            );
-          }
           console.log();
         }
 

@@ -206,27 +206,65 @@ export function createOrderCommands(
             return;
           }
 
-          console.log(chalk.bold('\nOrder History\n'));
+          // Fetch token info for all mints
+          const mints = new Set<string>();
+          response.orders.forEach((ord) => {
+            mints.add(ord.inputMint);
+            mints.add(ord.outputMint);
+          });
+          const tokenInfoMap = await tokenInfoService.getTokenInfoBatch(Array.from(mints));
+
+          console.log(chalk.bold(`\n📋 Order History (${response.orders.length})\n`));
           console.log(
-            `${chalk.gray('ID').padEnd(15)} ${chalk.gray('Status').padEnd(12)} ${chalk.gray('Created').padEnd(20)} ${chalk.gray('Input').padEnd(20)} ${chalk.gray('Output')}`
+            `${chalk.gray('Date').padEnd(12)} ${chalk.gray('Status').padEnd(10)} ${chalk.gray('Input').padEnd(25)} ${chalk.gray('→').padEnd(4)} ${chalk.gray('Output').padEnd(25)} ${chalk.gray('Value')}`
           );
-          console.log(chalk.gray('─'.repeat(87)));
+          console.log(chalk.gray('─'.repeat(110)));
 
           for (const ord of response.orders) {
             const status =
               ord.status === 'filled' || ord.status === 'Completed'
-                ? chalk.green(ord.status)
+                ? chalk.green('✓'.padEnd(10))
                 : ord.status === 'cancelled'
-                  ? chalk.red('Cancelled')
-                  : chalk.yellow(ord.status);
-            const date = new Date(ord.createdAt).toLocaleDateString();
-            const orderId = (ord.orderKey || ord.id || ord.orderId || 'unknown')
-              .toString()
-              .slice(0, 15);
-            const inputSymbol = ord.inputSymbol || 'tokens';
-            const outputSymbol = ord.outputSymbol || 'tokens';
+                  ? chalk.red('✗ Cancel'.padEnd(10))
+                  : chalk.yellow(ord.status.padEnd(10));
+            const date = new Date(ord.createdAt);
+            const dateStr = `${date.getDate()}/${date.getMonth() + 1}`;
+
+            const inputInfo = tokenInfoMap.get(ord.inputMint);
+            const outputInfo = tokenInfoMap.get(ord.outputMint);
+            const inputDecimals = inputInfo?.decimals ?? 9;
+            const outputDecimals = outputInfo?.decimals ?? 6;
+
+            const inputAmount = parseFloat(ord.makingAmount) / Math.pow(10, inputDecimals);
+            const outputAmount = parseFloat(ord.takingAmount) / Math.pow(10, outputDecimals);
+
+            const inputSymbol = inputInfo?.symbol || ord.inputMint.slice(0, 6) + '...';
+            const outputSymbol = outputInfo?.symbol || ord.outputMint.slice(0, 6) + '...';
+
+            const formattedInput =
+              inputAmount < 0.001
+                ? inputAmount.toExponential(2)
+                : inputAmount < 1
+                  ? inputAmount.toFixed(6)
+                  : inputAmount.toFixed(4);
+            const formattedOutput =
+              outputAmount < 0.001
+                ? outputAmount.toExponential(2)
+                : outputAmount < 1
+                  ? outputAmount.toFixed(6)
+                  : outputAmount.toFixed(4);
+
+            const inputStr = `${formattedInput} ${inputSymbol}`.padEnd(25);
+            const outputStr = `${formattedOutput} ${outputSymbol}`.padEnd(25);
+
+            // Show executed value for completed orders
+            let valueStr = '';
+            if (ord.status === 'filled' || ord.status === 'Completed') {
+              valueStr = chalk.green('$' + (outputAmount * 1).toFixed(2)); // Simplified, ideally fetch current price
+            }
+
             console.log(
-              `${orderId.padEnd(15)} ${status.padEnd(12)} ${date.padEnd(20)} ${`${ord.makingAmount} ${inputSymbol}`.padEnd(20)} ${ord.takingAmount} ${outputSymbol}`
+              `${dateStr.padEnd(12)} ${status} ${inputStr} ${'→'.padEnd(4)} ${outputStr} ${valueStr}`
             );
           }
         } else {
@@ -237,34 +275,42 @@ export function createOrderCommands(
             return;
           }
 
-          console.log(chalk.bold('\nActive Orders\n'));
+          // Calculate total blocked value
+          const totalBlocked = orders.reduce((sum, ord) => sum + ord.inputUsdValue, 0);
+
+          console.log(chalk.bold(`\n⏳ Active Limit Orders (${orders.length})`));
+          console.log(chalk.dim(`💰 Total blocked: $${totalBlocked.toFixed(2)}\n`));
+
           console.log(
-            `${chalk.gray('Input').padEnd(20)} ${chalk.gray('Output').padEnd(20)} ${chalk.gray('Target').padEnd(12)} ${chalk.gray('Current').padEnd(12)} ${chalk.gray('Diff')}`
+            `${chalk.gray('Token').padEnd(12)} ${chalk.gray('Amount').padEnd(18)} ${chalk.gray('Target').padEnd(12)} ${chalk.gray('Current').padEnd(12)} ${chalk.gray('Diff').padEnd(12)} ${chalk.gray('Created')}`
           );
-          console.log(chalk.gray('─'.repeat(76)));
+          console.log(chalk.gray('─'.repeat(90)));
 
           for (const ord of orders) {
             const inputSymbol =
-              ord.inputSymbol || (ord.inputMint ? ord.inputMint.slice(0, 8) : '???');
-            const outputSymbol =
-              ord.outputSymbol || (ord.outputMint ? ord.outputMint.slice(0, 8) : '???');
-            const inputStr = `${ord.inputAmount} ${inputSymbol}`;
-            const outputStr = `${ord.outputAmount} ${outputSymbol}`;
-            const target = `$${ord.targetPrice.toFixed(2)}`;
-            const current = `$${ord.currentPrice.toFixed(2)}`;
-            const diff =
+              ord.inputSymbol || (ord.inputMint ? ord.inputMint.slice(0, 8) + '...' : '???');
+            const inputAmount = parseFloat(ord.inputAmount);
+            // Format small numbers nicely
+            const formattedAmount =
+              inputAmount < 0.001
+                ? inputAmount.toExponential(2)
+                : inputAmount < 1
+                  ? inputAmount.toFixed(6)
+                  : inputAmount.toFixed(4);
+            const tokenStr = `${inputSymbol.padEnd(12)} ${formattedAmount.padEnd(18)}`;
+            const target = `$${ord.targetPrice < 1000 ? ord.targetPrice.toFixed(2) : ord.targetPrice.toExponential(2)}`;
+            const current = `$${ord.currentPrice < 1000 ? ord.currentPrice.toFixed(2) : ord.currentPrice.toExponential(2)}`;
+            const diffStr =
               ord.diffPercent >= 0
-                ? chalk.green(
-                    `+${ord.diffPercent.toFixed(1)}% ${ord.direction === 'up' ? '↑' : '↓'}`
-                  )
-                : chalk.red(`${ord.diffPercent.toFixed(1)}% ${ord.direction === 'up' ? '↑' : '↓'}`);
+                ? chalk.green(`+${ord.diffPercent.toFixed(0)}%`)
+                : chalk.red(`${ord.diffPercent.toFixed(0)}%`);
+            const created = (Date.now() - ord.createdAt.getTime()) / (1000 * 60 * 60 * 24);
+            const createdStr = created < 1 ? '<1d' : `${Math.floor(created)}d`;
 
             console.log(
-              `${inputStr.padEnd(20)} ${outputStr.padEnd(20)} ${target.padEnd(12)} ${current.padEnd(12)} ${diff}`
+              `${tokenStr} ${target.padEnd(12)} ${current.padEnd(12)} ${diffStr.padEnd(12)} ${createdStr}`
             );
           }
-
-          console.log(chalk.dim(`\n${orders.length} active order(s)`));
         }
       } catch (error) {
         console.error(

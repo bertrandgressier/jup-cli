@@ -11,6 +11,7 @@ export interface ActiveOrderWithPrice {
   outputSymbol?: string;
   inputAmount: string;
   outputAmount: string;
+  inputUsdValue: number;
   targetPrice: number;
   currentPrice: number;
   diffPercent: number;
@@ -89,6 +90,10 @@ export class OrderSyncService {
 
     const direction: 'up' | 'down' = diffPercent >= 0 ? 'up' : 'down';
 
+    // Calculate USD value of input tokens
+    const inputPrice = prices.get(order.inputMint) ?? 0;
+    const inputUsdValue = inputAmount * inputPrice;
+
     return {
       orderId: order.orderKey || order.id || order.orderId || '',
       inputMint: order.inputMint,
@@ -97,6 +102,7 @@ export class OrderSyncService {
       outputSymbol: outputInfo?.symbol,
       inputAmount: inputAmount.toString(),
       outputAmount: outputAmount.toString(),
+      inputUsdValue,
       targetPrice,
       currentPrice,
       diffPercent,
